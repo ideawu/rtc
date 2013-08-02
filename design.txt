@@ -1,0 +1,28 @@
+
+
+last_sent_ticks = BUF_TICKS;
+BATCH_SEND_TICKS = BUF_TICKS/2;
+
+while(1){
+	wait(last_sent_ticks);
+	
+	last_sent_ticks = 0;
+	foreach(channels as channel){
+		sent_ticks = channel.read(BATCH_SEND_TICKS);
+		if(sent_ticks < BATCH_SEND_TICKS){
+			if(channel.continued_drop_ticks > XXX){
+				channel.reset();
+			}else{
+				// if client doesn't have enough frames yet,
+				// those frames must have been lost.
+				// if those frames however come later, drop them.
+				channel.simulate_lost_frames(BATCH_SEND_TICKS - sent_ticks);
+			}
+		}
+		last_sent_ticks = max(last_sent_ticks, sent_ticks);
+	}
+	
+	if(last_sent_ticks == 0){
+		last_sent_ticks = BATCH_SEND_TICKS;
+	}
+}

@@ -63,11 +63,14 @@ unsub
 	params: room_id
 	return ok|fail
 
-## Data Transmission
+pub
+	roles: C -> S
+	params: room_id client_pub_seq data
+	return ok|fail
 
 data
-	roles: C <-> S
-	params: room_id
+	roles: S -> C
+	params: room_id room_data_seq data
 
 retrx
 	roles: C <-> S

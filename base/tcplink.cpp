@@ -3,17 +3,17 @@
 #include <string.h>
 #include <stdarg.h>
 
-#include "link.h"
-#include "util/log.h"
+#include "log.h"
+#include "tcplink.h"
 
 #define MAX_PACKET_SIZE		32 * 1024 * 1024
 #define ZERO_BUFFER_SIZE	8
 
-int Link::min_recv_buf = 8 * 1024;
-int Link::min_send_buf = 8 * 1024;
+int TcpLink::min_recv_buf = 8 * 1024;
+int TcpLink::min_send_buf = 8 * 1024;
 
 
-Link::Link(bool is_server){
+TcpLink::TcpLink(bool is_server){
 	sock = -1;
 	noblock_ = false;
 	remote_ip[0] = '\0';
@@ -23,14 +23,14 @@ Link::Link(bool is_server){
 		input = output = NULL;
 	}else{
 		// alloc memory lazily
-		//input = new Buffer(Link::min_recv_buf);
-		//output = new Buffer(Link::min_send_buf);
+		//input = new Buffer(TcpLink::min_recv_buf);
+		//output = new Buffer(TcpLink::min_send_buf);
 		input = new Buffer(ZERO_BUFFER_SIZE);
 		output = new Buffer(ZERO_BUFFER_SIZE);
 	}
 }
 
-Link::~Link(){
+TcpLink::~TcpLink(){
 	if(input){
 		delete input;
 	}
@@ -40,23 +40,23 @@ Link::~Link(){
 	this->close();
 }
 
-void Link::close(){
+void TcpLink::close(){
 	if(sock >= 0){
 		::close(sock);
 	}
 }
 
-void Link::nodelay(bool enable){
+void TcpLink::nodelay(bool enable){
 	int opt = enable? 1 : 0;
 	::setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (void *)&opt, sizeof(opt));
 }
 
-void Link::keepalive(bool enable){
+void TcpLink::keepalive(bool enable){
 	int opt = enable? 1 : 0;
 	::setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (void *)&opt, sizeof(opt));
 }
 
-void Link::noblock(bool enable){
+void TcpLink::noblock(bool enable){
 	noblock_ = enable;
 	if(enable){
 		::fcntl(sock, F_SETFL, O_NONBLOCK | O_RDWR);
@@ -66,8 +66,8 @@ void Link::noblock(bool enable){
 }
 
 
-Link* Link::connect(const char *ip, int port){
-	Link *link;
+TcpLink* TcpLink::connect(const char *ip, int port){
+	TcpLink *link;
 	int sock = -1;
 
 	struct sockaddr_in addr;
@@ -84,7 +84,7 @@ Link* Link::connect(const char *ip, int port){
 	}
 
 	//log_debug("fd: %d, connect to %s:%d", sock, ip, port);
-	link = new Link();
+	link = new TcpLink();
 	link->sock = sock;
 	link->keepalive(true);
 	return link;
@@ -96,8 +96,8 @@ sock_err:
 	return NULL;
 }
 
-Link* Link::listen(const char *ip, int port){
-	Link *link;
+TcpLink* TcpLink::listen(const char *ip, int port){
+	TcpLink *link;
 	int sock = -1;
 
 	int opt = 1;
@@ -121,7 +121,7 @@ Link* Link::listen(const char *ip, int port){
 	}
 	//log_debug("server socket fd: %d, listen on: %s:%d", sock, ip, port);
 
-	link = new Link(true);
+	link = new TcpLink(true);
 	link->sock = sock;
 	snprintf(link->remote_ip, sizeof(link->remote_ip), "%s", ip);
 	link->remote_port = port;
@@ -134,8 +134,8 @@ sock_err:
 	return NULL;
 }
 
-Link* Link::accept(){
-	Link *link;
+TcpLink* TcpLink::accept(){
+	TcpLink *link;
 	int client_sock;
 	struct sockaddr_in addr;
 	socklen_t addrlen = sizeof(addr);
@@ -153,7 +153,7 @@ Link* Link::accept(){
 		log_error("socket %d set linger failed: %s", client_sock, strerror(errno));
 	}
 
-	link = new Link();
+	link = new TcpLink();
 	link->sock = client_sock;
 	link->keepalive(true);
 	inet_ntop(AF_INET, &addr.sin_addr, link->remote_ip, sizeof(link->remote_ip));
@@ -161,7 +161,7 @@ Link* Link::accept(){
 	return link;
 }
 
-int Link::read(){
+int TcpLink::read(){
 	if(input->total() == ZERO_BUFFER_SIZE){
 		input->grow();
 	}
@@ -197,7 +197,7 @@ int Link::read(){
 	return ret;
 }
 
-int Link::write(){
+int TcpLink::write(){
 	if(output->total() == ZERO_BUFFER_SIZE){
 		output->grow();
 	}
@@ -233,7 +233,7 @@ int Link::write(){
 	return ret;
 }
 
-int Link::flush(){
+int TcpLink::flush(){
 	int len = 0;
 	while(!output->empty()){
 		int ret = this->write();
@@ -245,7 +245,7 @@ int Link::flush(){
 	return len;
 }
 
-const std::vector<Bytes>* Link::recv(){
+const std::vector<Bytes>* TcpLink::recv(){
 	this->recv_data.clear();
 
 	if(input->empty()){
@@ -338,7 +338,7 @@ const std::vector<Bytes>* Link::recv(){
 	return &this->recv_data;
 }
 
-int Link::send(const std::vector<std::string> &resp){
+int TcpLink::send(const std::vector<std::string> &resp){
 	for(int i=0; i<resp.size(); i++){
 		output->append_record(resp[i]);
 	}
@@ -346,7 +346,7 @@ int Link::send(const std::vector<std::string> &resp){
 	return 0;
 }
 
-int Link::send(const std::vector<Bytes> &resp){
+int TcpLink::send(const std::vector<Bytes> &resp){
 	for(int i=0; i<resp.size(); i++){
 		output->append_record(resp[i]);
 	}
@@ -354,20 +354,20 @@ int Link::send(const std::vector<Bytes> &resp){
 	return 0;
 }
 
-int Link::send(const Bytes &s1){
+int TcpLink::send(const Bytes &s1){
 	output->append_record(s1);
 	output->append('\n');
 	return 0;
 }
 
-int Link::send(const Bytes &s1, const Bytes &s2){
+int TcpLink::send(const Bytes &s1, const Bytes &s2){
 	output->append_record(s1);
 	output->append_record(s2);
 	output->append('\n');
 	return 0;
 }
 
-int Link::send(const Bytes &s1, const Bytes &s2, const Bytes &s3){
+int TcpLink::send(const Bytes &s1, const Bytes &s2, const Bytes &s3){
 	output->append_record(s1);
 	output->append_record(s2);
 	output->append_record(s3);
@@ -375,7 +375,7 @@ int Link::send(const Bytes &s1, const Bytes &s2, const Bytes &s3){
 	return 0;
 }
 
-int Link::send(const Bytes &s1, const Bytes &s2, const Bytes &s3, const Bytes &s4){
+int TcpLink::send(const Bytes &s1, const Bytes &s2, const Bytes &s3, const Bytes &s4){
 	output->append_record(s1);
 	output->append_record(s2);
 	output->append_record(s3);
@@ -384,7 +384,7 @@ int Link::send(const Bytes &s1, const Bytes &s2, const Bytes &s3, const Bytes &s
 	return 0;
 }
 
-int Link::send(const Bytes &s1, const Bytes &s2, const Bytes &s3, const Bytes &s4, const Bytes &s5){
+int TcpLink::send(const Bytes &s1, const Bytes &s2, const Bytes &s3, const Bytes &s4, const Bytes &s5){
 	output->append_record(s1);
 	output->append_record(s2);
 	output->append_record(s3);
@@ -394,7 +394,7 @@ int Link::send(const Bytes &s1, const Bytes &s2, const Bytes &s3, const Bytes &s
 	return 0;
 }
 
-const std::vector<Bytes>* Link::response(){
+const std::vector<Bytes>* TcpLink::response(){
 	while(1){
 		const std::vector<Bytes> *resp = this->recv();
 		if(resp == NULL){
@@ -410,7 +410,7 @@ const std::vector<Bytes>* Link::response(){
 	return NULL;
 }
 
-const std::vector<Bytes>* Link::request(const Bytes &s1){
+const std::vector<Bytes>* TcpLink::request(const Bytes &s1){
 	if(this->send(s1) == -1){
 		return NULL;
 	}
@@ -420,7 +420,7 @@ const std::vector<Bytes>* Link::request(const Bytes &s1){
 	return this->response();
 }
 
-const std::vector<Bytes>* Link::request(const Bytes &s1, const Bytes &s2){
+const std::vector<Bytes>* TcpLink::request(const Bytes &s1, const Bytes &s2){
 	if(this->send(s1, s2) == -1){
 		return NULL;
 	}
@@ -430,7 +430,7 @@ const std::vector<Bytes>* Link::request(const Bytes &s1, const Bytes &s2){
 	return this->response();
 }
 
-const std::vector<Bytes>* Link::request(const Bytes &s1, const Bytes &s2, const Bytes &s3){
+const std::vector<Bytes>* TcpLink::request(const Bytes &s1, const Bytes &s2, const Bytes &s3){
 	if(this->send(s1, s2, s3) == -1){
 		return NULL;
 	}
@@ -440,7 +440,7 @@ const std::vector<Bytes>* Link::request(const Bytes &s1, const Bytes &s2, const 
 	return this->response();
 }
 
-const std::vector<Bytes>* Link::request(const Bytes &s1, const Bytes &s2, const Bytes &s3, const Bytes &s4){
+const std::vector<Bytes>* TcpLink::request(const Bytes &s1, const Bytes &s2, const Bytes &s3, const Bytes &s4){
 	if(this->send(s1, s2, s3, s4) == -1){
 		return NULL;
 	}
@@ -450,7 +450,7 @@ const std::vector<Bytes>* Link::request(const Bytes &s1, const Bytes &s2, const 
 	return this->response();
 }
 
-const std::vector<Bytes>* Link::request(const Bytes &s1, const Bytes &s2, const Bytes &s3, const Bytes &s4, const Bytes &s5){
+const std::vector<Bytes>* TcpLink::request(const Bytes &s1, const Bytes &s2, const Bytes &s3, const Bytes &s4, const Bytes &s5){
 	if(this->send(s1, s2, s3, s4, s5) == -1){
 		return NULL;
 	}
@@ -462,9 +462,9 @@ const std::vector<Bytes>* Link::request(const Bytes &s1, const Bytes &s2, const 
 
 #if 0
 int main(){
-	//Link link;
+	//TcpLink link;
 	//link.listen("127.0.0.1", 8888);
-	Link *link = Link::connect("127.0.0.1", 8080);
+	TcpLink *link = TcpLink::connect("127.0.0.1", 8080);
 	printf("%d\n", link);
 	getchar();
 	return 0;

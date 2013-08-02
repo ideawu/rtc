@@ -4,6 +4,9 @@
 #include "packet.h"
 
 int Packet::parse(){
+	if(this->len < HEADER_LEN){
+		return -1;
+	}
 	this->params_.clear();
 	
 	int size = this->size();
@@ -56,4 +59,68 @@ int Packet::parse(){
 		//}
 	}
 	return 1;
+}
+
+int Packet::append(const Bytes &b){
+#define MAX_BLOCK_SIZE 10000
+#define MAX_BLOCK_SIZE_STR_LEN 5
+	if(MAX_BLOCK_SIZE_STR_LEN + 2 + b.size() + this->len > MAX_DATA_LEN){
+		return -1;
+	}
+	char *p = this->buf() + this->len;
+	int size_str_len = sprintf(p, " %d ", b.size());
+	if(size_str_len < 0){
+		return -1;
+	}
+	p += size_str_len;
+	memcpy(p, b.data(), b.size());
+	p += b.size();
+	
+	int ret = size_str_len + b.size();
+	this->len += ret;
+	return ret;
+}
+
+int Packet::set_params(const Bytes &b1){
+	this->len = HEADER_LEN;
+	return this->append(b1);
+}
+
+int Packet::set_params(const Bytes &b1, const Bytes &b2){
+	this->len = HEADER_LEN;
+	int ret = 0;
+	int tmp;
+	tmp = this->append(b1);
+	if(tmp == -1){
+		return -1;
+	}
+	ret += tmp;
+	tmp = this->append(b2);
+	if(tmp == -1){
+		return -1;
+	}
+	ret += tmp;
+	return ret;
+}
+
+int Packet::set_params(const Bytes &b1, const Bytes &b2, const Bytes &b3){
+	this->len = HEADER_LEN;
+	int ret = 0;
+	int tmp;
+	tmp = this->append(b1);
+	if(tmp == -1){
+		return -1;
+	}
+	ret += tmp;
+	tmp = this->append(b2);
+	if(tmp == -1){
+		return -1;
+	}
+	ret += tmp;
+	tmp = this->append(b3);
+	if(tmp == -1){
+		return -1;
+	}
+	ret += tmp;
+	return ret;
 }

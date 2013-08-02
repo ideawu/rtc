@@ -1,6 +1,6 @@
 .DS_Store
 *.a
 *.o
-./test
 ./server/rtc
+./test/av
 

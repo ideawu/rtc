@@ -6,9 +6,9 @@
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
 
-#include "util/bytes.h"
+#include "bytes.h"
 
-class Link{
+class TcpLink{
 	private:
 		int sock;
 		bool noblock_;
@@ -29,8 +29,8 @@ class Link{
 		double create_time;
 		double active_time;
 
-		Link(bool is_server=false);
-		~Link();
+		TcpLink(bool is_server=false);
+		~TcpLink();
 		void close();
 		void nodelay(bool enable=true);
 		// noblock(true) is supposed to corperate with IO Multiplex,
@@ -42,9 +42,9 @@ class Link{
 			return sock;
 		}
 
-		static Link* connect(const char *ip, int port);
-		static Link* listen(const char *ip, int port);
-		Link* accept();
+		static TcpLink* connect(const char *ip, int port);
+		static TcpLink* listen(const char *ip, int port);
+		TcpLink* accept();
 
 		// read network data info buffer
 		int read();

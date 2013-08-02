@@ -3,55 +3,80 @@
 
 #include <map>
 #include <list>
-#include <vector>
 #include "base/net.h"
+#include "audio/mixer.h"
 #include "room.h"
 #include "client.h"
-
-
-struct ClientList_cmp{
-	bool operator()(const Address &a1, const Address &a2) const{
-		return memcmp(&a1.sock_addr, &a2.sock_addr, sizeof(a1.sock_addr)) < 0;
-	}
-};
-typedef std::map<Address, Client, ClientList_cmp> ClientList;
 
 class Room
 {
 private:
-  	ClientList clients_;
+  	std::map<int, Client*> clients_;
+	audio::Mixer mixer;
 public:
 	int id;
 
-	const ClientList* clients(){
+	const std::map<int, Client*>* clients(){
 		return &clients_;
 	}
 	
-	void join(const Address &addr, const Client &client){
-		clients_[addr] = client;
-	}
-	
-	bool has(const Address &addr){
-		return clients_.find(addr) != clients_.end();
-	}
+	void tick();
 	
 	int join(Client *client);
 	int quit(Client *client);
+	
+	int publish(Client *client, Packet *req);
 };
+
 
 class RoomSvc
 {
 private:
-	std::vector<Room *> rooms;
-	std::list<Room *> tmp_rooms;
+	std::list<Room *> pool;
+	std::map<int, Room *> items;
 public:
-	RoomSvc();
-	~RoomSvc();
+	typedef std::map<int, Room *>::iterator iterator;
 	
-	Room* get(int id);
-	Room* open();
-	int close(int id);
+	iterator begin(){
+		return items.begin();
+	}
 	
+	iterator end(){
+		return items.end();
+	}
+
+	Room* get(int id){
+		std::map<int, Room *>::iterator it = items.find(id);
+		if(items.find(id) == items.end()){
+			return NULL;
+		}else{
+			return it->second;
+		}
+	}
+
+	Room* alloc(){
+		Room *t = NULL;
+		if(pool.size() > 0){
+			t = pool.front();
+			pool.pop_front();
+			items[t->id] = t;
+		}else{
+			t = new Room();
+			t->id = items.size();
+			items[t->id] = t;
+		}
+		return t;
+	}
+
+	void free(int id){
+		std::map<int, Room*>::iterator it = items.find(id);
+		if(it == items.end()){
+			return;
+		}else{
+			pool.push_back(it->second);
+			items.erase(it);
+		}
+	}
 };
 
 #endif

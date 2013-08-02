@@ -13,18 +13,31 @@ class UdpLink
 {
 private:
 	int sock;
-	
-	UdpLink();
 
 public:
+	void *data;
+
+	UdpLink();
 	~UdpLink();
 	
 	static UdpLink* create();
-	static UdpLink* server(const std::string host, int port);
-	static UdpLink* client(const std::string host, int port);
+	static UdpLink* server(const std::string &host, int port);
+	static UdpLink* client(const std::string &host, int port);
+
+	int fd() const{
+		return sock;
+	}
 	
-	int bind(const std::string host, int port);
-	int connect(const std::string host, int port);
+	void close(){
+		if(sock >= 0){
+			::close(sock);
+			sock = -1;
+		}
+	}
+	
+	int bind(const std::string &host, int port);
+	int connect(const std::string &host, int port);
+	int connect(const Address &addr);
 	
 	int send(const Packet &packet, const Address *addr=NULL);
 	int recv(Packet *packet, Address *addr=NULL);

@@ -18,6 +18,15 @@ public:
 	
 	std::string host() const;
 	int port() const;
+	
+	std::string repr() const{
+		char buf[16];
+		snprintf(buf, sizeof(buf), "%d", this->port());
+		std::string ret = this->host();
+		ret.append(":");
+		ret.append(buf);
+		return ret;
+	}
 };
 
 #endif
