@@ -73,15 +73,20 @@ private:
 		int frame_size = SAMPLE_RATE/100 * 4; // max 480 * 6
 		while(m_samples.size() >= frame_size){
 			const sf::Int16 *src = &m_samples[0];
+			/*
 			unsigned char buf[16 * 1024];
 			int enc_bytes = opus_encode(enc, (opus_int16 *)src, frame_size, buf, sizeof(buf));
 			log_debug("raw: %d, encoded: %d", frame_size*sizeof(sf::Int16), enc_bytes);
-		
+			*/
+			char *buf = (char *)src;
+			int enc_bytes = frame_size * 2;
+			
 			if(enc_bytes > 0){
 				Packet req;
 				req.set_type(Packet::DATA);
 				req.set_data(buf, enc_bytes);
-				link->send(req);
+				int ret = link->send(req);
+				log_debug("send %d", ret);
 			}
 			
 			m_samples.erase(m_samples.begin(), m_samples.begin() + frame_size - 1);
@@ -145,7 +150,8 @@ public:
 		opus_int16 pcm[8 * 1024];
 		while(1){
 			Packet resp;
-			link->recv(&resp);
+			int ret = link->recv(&resp);
+			log_debug("recv %d", ret);
 			
 			unsigned char *raw = (unsigned char *)resp.data();
 			int raw_bytes = resp.size();
@@ -157,6 +163,7 @@ public:
 					to_drop = true;
 				}
 			}
+			/*
 			if(to_drop){
 				if(opus_decode(dec, NULL, 0, NULL, 0, 0)){
 					//
@@ -167,8 +174,12 @@ public:
 			
 			int sampleCount = opus_decode(dec, raw, raw_bytes, pcm, sizeof(pcm), 0);
 			log_debug("raw: %d, decoded: %d", raw_bytes, sampleCount*sizeof(opus_int16));
-			
+		
             const sf::Int16* samples = (const sf::Int16 *)pcm;
+			*/
+
+			int sampleCount = raw_bytes/2;
+            const sf::Int16* samples = (const sf::Int16 *)raw;
 			{
 			    sf::Lock lock(m_mutex);
 			    std::copy(samples, samples + sampleCount, std::back_inserter(m_samples));

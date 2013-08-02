@@ -13,11 +13,18 @@ class Room
 private:
   	std::map<int, Client*> clients_;
 	audio::Mixer mixer;
+	int ticks;
 public:
 	int id;
 
-	const std::map<int, Client*>* clients(){
-		return &clients_;
+	Room(){
+		ticks = 0;
+	}
+	
+	void reset(){
+		ticks = 0;
+		clients_.clear();
+		mixer.reset();
 	}
 	
 	void tick();
@@ -65,6 +72,7 @@ public:
 			t->id = items.size();
 			items[t->id] = t;
 		}
+		t->reset();
 		return t;
 	}
 

@@ -17,7 +17,7 @@ private:
 	struct pkt_t{
 		uint16_t type;
 		uint16_t seq;
-		char data[490];
+		char data[8192];
 	}pkt;
 	
 	std::vector<Bytes> params_;

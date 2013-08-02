@@ -12,6 +12,8 @@ int Room::quit(Client *client){
 }
 
 int Room::publish(Client *client, Packet *req){
+	//audio::Packet ap
+	//mixer.process_packet(client->id, ap);
 	std::map<int, Client*>::const_iterator it;
 	for(it = clients_.begin(); it!=clients_.end(); it++){
 		const Client *client = (*it).second;
@@ -25,8 +27,8 @@ int Room::publish(Client *client, Packet *req){
 }
 	
 void Room::tick(){
-	audio::Packet *audio_packet = mixer.tick();
-	if(audio_packet == NULL){
+	audio::Packet *ap = mixer.tick();
+	if(ap == NULL){
 		return;
 	}
 }

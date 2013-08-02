@@ -26,6 +26,11 @@ public:
 	
 	~Client(){
 	}
+	
+	void reset(){
+		link = NULL;
+		room = NULL;
+	}
 };
 
 
@@ -65,6 +70,7 @@ public:
 			t->id = items.size();
 			items[t->id] = t;
 		}
+		t->reset();
 		return t;
 	}
 

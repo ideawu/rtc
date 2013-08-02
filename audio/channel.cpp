@@ -4,6 +4,8 @@ namespace audio{
 
 Channel::Channel(){
 	id = 0;
+	buffering = 0;
+	dropped = 0;
 	next_packet_seq = -1;
 }
 

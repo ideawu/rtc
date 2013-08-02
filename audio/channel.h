@@ -13,6 +13,9 @@ private:
 	std::list<Packet> packets;
 	Packet out_packet;
 public:
+	int buffering;
+	int dropped;
+
 	Channel();
 	~Channel();
 	
