@@ -2,6 +2,7 @@
 *.a
 *.o
 *.exe
+*.dSYM
 ./server/rtc
 ./test/av
 

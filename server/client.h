@@ -16,12 +16,8 @@ public:
 	UdpLink *link;
 	Room *room;
 	
-	struct{
-		uint32_t send_next;
-		uint32_t recv_next;
-	}seq;
-	
 	Client(){
+		reset();
 	}
 	
 	~Client(){

@@ -4,9 +4,9 @@ all: ${OBJS}
 	ar -cru librtc-audio.a ${OBJS}
 
 channel.o: channel.h channel.cpp
-	g++ -c channel.cpp -I ../
+	g++ ${CFLAGS} -c channel.cpp -I ../
 mixer.o: mixer.h mixer.cpp
-	g++ -c mixer.cpp -I ../
+	g++ ${CFLAGS} -c mixer.cpp -I ../
 
 clean:
 	rm -rf *.a *.o	

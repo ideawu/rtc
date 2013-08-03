@@ -55,7 +55,8 @@ quit
 
 sub
 	roles: C -> S
-	params: room_id seq
+	with_seq
+	params: room_id
 	return ok|fail
 
 unsub
@@ -65,12 +66,14 @@ unsub
 
 pub
 	roles: C -> S
-	params: room_id client_pub_seq data
+	with_seq
+	params: room_id data
 	return ok|fail
 
 data
 	roles: S -> C
-	params: room_id room_data_seq data
+	with_seq
+	params: room_id data
 
 retrx
 	roles: C <-> S

@@ -27,13 +27,13 @@ UdpLink* Server::proc_listen_link(UdpLink *listen_link, Fdevents *fdes){
 		log_debug("bad request");
 		return NULL;
 	}
-	const std::vector<Bytes> *params = req.params();
+	//const std::vector<Bytes> *params = req.params();
 	//log_debug("%s", serialize_params(*params).c_str());
 
 	switch(req.type()){
 		// TODO: OPEN is only allowed in admin_client_link
 		case Packet::OPEN:{
-			int ret = this->proc_open(listen_link, &req, &addr);
+			this->proc_open(listen_link, &req, &addr);
 			break;
 		}
 		case Packet::JOIN:{
@@ -72,12 +72,12 @@ int Server::proc_client_link(UdpLink *link, Fdevents *fdes){
 		log_debug("bad request");
 		return 0;
 	}
-	const std::vector<Bytes> *params = req.params();
+	//const std::vector<Bytes> *params = req.params();
 	//log_debug("%s", serialize_params(*params).c_str());
 	
 	switch(req.type()){
-		case Packet::DATA:{
-			int ret = this->proc_data(client, &req);
+		case Packet::PUB:{
+			this->proc_pub(client, &req);
 			break;
 		}
 		case Packet::JOIN:{
@@ -179,7 +179,7 @@ Client* Server::proc_join(UdpLink *serv_link, Packet *req, Address *addr){
 	return client;
 }
 
-int Server::proc_data(Client *client, Packet *req){
+int Server::proc_pub(Client *client, Packet *req){
 	Room *room = client->room;
 	room->publish(client, req);
 	return 0;

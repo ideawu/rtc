@@ -3,7 +3,7 @@
 
 namespace audio{
 
-int Mixer::process_packet(int channel_id, const Packet &packet){
+int Mixer::process_chunk(int channel_id, const Chunk &chunk){
 	Channel *channel;
 	std::map<int, Channel *>::iterator it = channels.find(channel_id);
 	if(it == channels.end()){
@@ -13,43 +13,35 @@ int Mixer::process_packet(int channel_id, const Packet &packet){
 	}else{
 		channel = it->second;
 	}
-	channel->push_packet(packet);
+	channel->push_chunk(chunk);
 	return 0;
 }
 
-Packet* Mixer::tick(){
-	this->out_packet.clear();
+Chunk* Mixer::tick(){
+	this->out_chunk.reset();
 	
 	std::map<int, Channel *>::iterator it;
 	for(it = channels.begin(); it != channels.end(); it++){
 		Channel *channel = it->second;
-		
-		if(channel->buffering < BUF_SIZE){
-			channel->buffering ++;
-			continue;
-		}
 
-		Packet *packet = channel->next_packet();
-		if(!packet){
-			log_debug("channel[%d] packet lost", channel->id);
-			channel->dropped ++;
+		Chunk *chunk = channel->next_chunk();
+		if(!chunk){
+			log_debug("channel[%d] chunk lost", channel->id);
 			// TODO:
-			// simulate packet, break
+			// simulate chunk, break
 			continue;
-		}else{
-			// we only cound continuous dropped packets
-			channel->dropped = 0;
 		}
 		
-		log_debug("channel[%d] packet mixed", channel->id);
-		this->out_packet.mix(*packet);
+		log_debug("channel[%d] mixed, buf=%d", channel->id, channel->chunks.size());
+		this->out_chunk.mix(*chunk);
 		// TODO: remember which channel is mixed,
-		// unmix before sending the mixed packet to those users
+		// unmix before sending the mixed chunk to those users
 	}
+	
 	// remove idle channel
 	for(it = channels.begin(); it != channels.end();){
 		Channel *channel = it->second;
-		if(channel->dropped > BUF_SIZE){
+		if(channel->is_idle()){
 			log_debug("remove idle channel[%d]", channel->id);
 			channels.erase(it++);
 			delete channel;
@@ -58,7 +50,7 @@ Packet* Mixer::tick(){
 		}
 	}
 	
-	return &this->out_packet;
+	return &this->out_chunk;
 }
 
 }; // namespace

@@ -2,7 +2,7 @@
 #define RTC_AUDIO_CHANNEL_H
 
 #include <list>
-#include "packet.h"
+#include "chunk.h"
 #include "channel.h"
 
 namespace audio{
@@ -10,21 +10,27 @@ namespace audio{
 class Channel
 {
 private:
-	std::list<Packet> packets;
-	Packet out_packet;
+	Chunk out_chunk;
+	const static int BUF_LOW	= 3;
+	const static int BUF_HIGH	= 6;
+	int slow_start;
+	int idle;
+	int next_seq;
 public:
-	int buffering;
-	int dropped;
+	int id;
+	std::list<Chunk> chunks;
 
 	Channel();
 	~Channel();
 	
-	int id;
-	int next_packet_seq;
-	//Packet* simulate_lost_frame(int seq);
+	bool is_idle(){
+		return idle > BUF_HIGH;
+	}
 	
-	Packet* next_packet();
-	int push_packet(const Packet &packet);
+	//Chunk* simulate_lost_frame(int seq);
+	
+	Chunk* next_chunk();
+	int push_chunk(const Chunk &chunk);
 };
 
 };

@@ -4,6 +4,7 @@
 #include <map>
 #include <list>
 #include "base/net.h"
+#include "base/packet.h"
 #include "audio/mixer.h"
 #include "room.h"
 #include "client.h"
@@ -14,11 +15,14 @@ private:
   	std::map<int, Client*> clients_;
 	audio::Mixer mixer;
 	int ticks;
+	uint16_t data_seq_next;
+	
+	void broadcast(const void *data, int size);
 public:
 	int id;
 
 	Room(){
-		ticks = 0;
+		reset();
 	}
 	
 	void reset(){

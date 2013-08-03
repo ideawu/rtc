@@ -17,6 +17,9 @@
 #include "base/udplink.h"
 
 #define SAMPLE_RATE 48000
+// 40ms, allow 10, 20, 40, 60
+#define PACKET_TIME 40
+#define FRAME_SIZE (PACKET_TIME * SAMPLE_RATE/1000)
 
 class NetworkRecorder : public sf::SoundRecorder
 {
@@ -51,16 +54,26 @@ public:
 		Packet req;
 		req.set_type(Packet::JOIN);
 		req.set_seq(101);
+		req.set_params("0", "token");
 		
 		ret = link->send(req);
 		log_debug("send %d bytes", ret);
+		if(ret <= 0){
+			exit(0);
+		}
 	
 		Packet resp;
 		ret = link->recv(&resp);
 		log_debug("recv %d bytes", ret);
 		if(ret > 0){
-			log_debug("recv type: %d, seq: %u, data: %s", resp.type(), resp.seq(), resp.data());
+			log_debug("recv: %s", resp.repr().c_str());
+		}else{
+			exit(0);
 		}
+
+		int bufsize = 5000;
+		::setsockopt(link->fd(), SOL_SOCKET, SO_SNDBUF, &bufsize, sizeof(bufsize));
+		::setsockopt(link->fd(), SOL_SOCKET, SO_RCVBUF, &bufsize, sizeof(bufsize));
 
 		return 0;
 	}
@@ -68,9 +81,11 @@ public:
 private:
 
     virtual bool onProcessSamples(const sf::Int16 *samples, std::size_t count){
+		static int seq = 0;
+		
 		std::copy(samples, samples + count, std::back_inserter(m_samples));
 		
-		int frame_size = SAMPLE_RATE/100 * 4; // max 480 * 6
+		int frame_size = FRAME_SIZE;
 		while(m_samples.size() >= frame_size){
 			const sf::Int16 *src = &m_samples[0];
 			/*
@@ -83,10 +98,14 @@ private:
 			
 			if(enc_bytes > 0){
 				Packet req;
-				req.set_type(Packet::DATA);
-				req.set_data(buf, enc_bytes);
+				req.set_type(Packet::PUB);
+				req.set_seq(seq ++);
+				req.set_params(Bytes("0", 1), Bytes(buf, enc_bytes));
 				int ret = link->send(req);
 				log_debug("send %d", ret);
+				if(ret <= 0){
+					exit(0);
+				}
 			}
 			
 			m_samples.erase(m_samples.begin(), m_samples.begin() + frame_size - 1);
@@ -127,21 +146,29 @@ public:
 		Packet req;
 		req.set_type(Packet::JOIN);
 		req.set_seq(101);
+		req.set_params("0", "token");
 		
 		ret = link->send(req);
 		log_debug("send %d bytes", ret);
+		if(ret <= 0){
+			exit(0);
+		}
 	
 		Packet resp;
 		ret = link->recv(&resp);
 		log_debug("recv %d bytes", ret);
 		if(ret > 0){
-			log_debug("recv type: %d, seq: %u, data: %s", resp.type(), resp.seq(), resp.data());
+			log_debug("recv: %s", resp.repr().c_str());
+		}else{
+			exit(0);
 		}
 
 		return 0;
 		
 		// set smaller recvbuf for aggressive drop
-		//::setsockopt(sock, SOL_SOCKET, SO_RCVBUF, &recvbuf, sizeof(recvbuf));
+		int bufsize = 5000;
+		::setsockopt(link->fd(), SOL_SOCKET, SO_SNDBUF, &bufsize, sizeof(bufsize));
+		::setsockopt(link->fd(), SOL_SOCKET, SO_RCVBUF, &bufsize, sizeof(bufsize));
 	}
 	
 	void start(){

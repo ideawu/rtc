@@ -36,7 +36,7 @@ private:
 	int proc_close(UdpLink *link, Packet *req, Address *addr);
 	Client* proc_join(UdpLink *serv_link, Packet *req, Address *addr);
 	int proc_quit(UdpLink *link, Packet *req, Address *addr);
-	int proc_data(Client *client, Packet *req);
+	int proc_pub(Client *client, Packet *req);
 };
 
 #endif

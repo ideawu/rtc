@@ -5,17 +5,17 @@
 
 namespace audio{
 
-class Packet
+class Chunk
 {
 public:
-	int seq;
+	int seq; // TODO:
 	std::string buf;
 	
-	Packet(){
-		seq = 0;
+	Chunk(){
+		reset();
 	}
 	
-	void clear(){
+	void reset(){
 		seq = 0;
 		buf.clear();
 	}
@@ -28,19 +28,25 @@ public:
 		return buf.size()/2;
 	}
 	
-	void mix(const Packet &pkt){
-		int size = std::min(this->size(), pkt.size());
+	void mix(const Chunk &pkt){
+		this->buf = pkt.buf;
+		/*
+		if(this->buf.size() < pkt.buf.size()){
+			this->buf.resize(pkt.buf.size(), 0);
+		}
 		uint16_t *dst = this->frames();
 		uint16_t *src = pkt.frames();
+		int size = this->size();
 		for(int i=0; i<size; i++){
 			dst[i] = dst[i]/2 + src[i]/2;
 		}
+		*/
 	}
 	
-	void unmix(const Packet &pkt){
-		int size = std::min(this->size(), pkt.size());
+	void unmix(const Chunk &pkt){
 		uint16_t *dst = this->frames();
 		uint16_t *src = pkt.frames();
+		int size = std::min(this->size(), pkt.size());
 		for(int i=0; i<size; i++){
 			dst[i] = dst[i] + (dst[i] - src[i]);
 		}

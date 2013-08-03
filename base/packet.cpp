@@ -4,10 +4,11 @@
 #include "packet.h"
 
 int Packet::parse(){
+	parsed = true;
+	this->params_.clear();
 	if(this->len < HEADER_LEN){
 		return -1;
 	}
-	this->params_.clear();
 	
 	int size = this->size();
 	char *head = (char *)this->data();

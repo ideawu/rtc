@@ -41,6 +41,9 @@ public:
 	
 	int send(const Packet &packet, const Address *addr=NULL);
 	int recv(Packet *packet, Address *addr=NULL);
+	
+	int send_buf(int size=-1);
+	int recv_buf(int size=-1);
 };
 
 #endif

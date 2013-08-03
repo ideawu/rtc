@@ -5,6 +5,8 @@
 #include "base/fde.h"
 #include "server.h"
 
+#define TICK_INTERVAL 40 // ms
+
 UdpLink *serv_link;
 volatile bool quit = false;
 volatile uint64_t timer_ticks = 0;
@@ -41,7 +43,7 @@ int main(int argc, char **argv){
 	
 	struct itimerval tv;
 	tv.it_interval.tv_sec = 0;
-	tv.it_interval.tv_usec = 500 * 1000;
+	tv.it_interval.tv_usec = TICK_INTERVAL * 1000;
 	tv.it_value.tv_sec = 0;
 	tv.it_value.tv_usec = 1;
 	setitimer(ITIMER_REAL, &tv, NULL); // not accurate
@@ -61,7 +63,7 @@ int main(int argc, char **argv){
 		}
 		if(last_timer_ticks < timer_ticks){
 			int elapsed_ticks = timer_ticks - last_timer_ticks;
-			last_timer_ticks = timer_ticks;
+			last_timer_ticks += elapsed_ticks;
 			for(int i=0; i<elapsed_ticks; i++){
 				serv.tick();
 			}
@@ -95,6 +97,7 @@ int main(int argc, char **argv){
 
 int serv_init(int argc, char **argv){
 	serv_link = UdpLink::server("0.0.0.0", 10210);
+	return 0;
 }
 
 int serv_free(){

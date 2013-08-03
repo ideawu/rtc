@@ -21,6 +21,7 @@ private:
 	}pkt;
 	
 	std::vector<Bytes> params_;
+	bool parsed;
 	
 public:
 	const static int MAX_LEN = sizeof(pkt_t);
@@ -36,10 +37,13 @@ public:
 	const static uint16_t JOIN	= TYPE_VALUE('j', 'o');
 	const static uint16_t QUIT	= TYPE_VALUE('q', 'u');
 	const static uint16_t DATA	= TYPE_VALUE('d', 'a');
+	const static uint16_t SUB	= TYPE_VALUE('s', 'u');
+	const static uint16_t PUB	= TYPE_VALUE('p', 'u');
 #undef TYPE_VALUE
 
 	Packet(){
 		len = HEADER_LEN;
+		parsed = false;
 	}
 	
 	char* buf() const{
@@ -85,7 +89,25 @@ public:
 	}
 	
 	std::string repr() const{
-		return hexmem(&pkt, len);
+		std::string ret = hexmem(&pkt, HEADER_LEN);
+		if(!parsed){
+			((Packet *)this)->parse();
+		}
+		std::vector<Bytes>::const_iterator it;
+		for(it=params_.begin(); it!=params_.end(); it++){
+			const Bytes &b = *it;
+			if(b.size() == 0){
+				ret.append(" \"\"");
+			}else if(b.size() > 32){
+				char buf[32];
+				snprintf(buf, sizeof(buf), " [%d]", b.size());
+				ret.append(buf);
+			}else{
+				ret.append(" ");
+				ret.append(hexmem(b.data(), b.size()).c_str());
+			}
+		}
+		return ret;
 	}
 
 	int append(const Bytes &b);
