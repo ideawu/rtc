@@ -3,6 +3,10 @@
 
 namespace audio{
 
+void Mixer::free_channel(int channel_id){
+	channels.erase(channel_id);
+}
+
 int Mixer::process_chunk(int channel_id, const Chunk &chunk){
 	Channel *channel;
 	std::map<int, Channel *>::iterator it = channels.find(channel_id);
@@ -23,21 +27,7 @@ Chunk* Mixer::tick(){
 	std::map<int, Channel *>::iterator it;
 	for(it = channels.begin(); it != channels.end(); it++){
 		Channel *channel = it->second;
-
-		Chunk *chunk = channel->next_chunk();
-		if(!chunk){
-			if(channel->ready()){
-				log_trace("channel[%d] chunk lost", channel->id);
-				// TODO:
-				// simulate chunk, break
-			}
-			continue;
-		}
-
-		log_trace("channel[%d] mixed, buf=%d", channel->id, channel->chunks.size());
-		this->out_chunk.mix(*chunk);
-		// TODO: remember which channel is mixed,
-		// unmix before sending the mixed chunk to those users
+		channel->mix_into(&this->out_chunk);
 	}
 	
 	// remove idle channel

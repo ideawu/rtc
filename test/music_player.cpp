@@ -67,14 +67,28 @@ int main(int argc, char **argv){
 		exit(0);
 	}
 	
-	const sf::Int16 *samples = sound.getSamples();
+	int chunk_size = FRAME_SIZE;
 	int count = sound.getSampleCount();
 	int rate = sound.getSampleRate();
+	log_debug("count=%d rate=%d chunk_size=%d %f", count, rate, chunk_size, (float)count/rate);
 	
 	if(rate != SAMPLE_RATE){
 		log_error("invalid sample rate %d, it should be %d", rate, SAMPLE_RATE);
 		exit(0);
 	}
+	
+	int sample_size;
+	if(count % chunk_size == 0){
+		sample_size = count;
+	}else{
+		sample_size = (count/chunk_size + 1) * chunk_size;
+		log_debug("resize samples to %d", sample_size);
+	}
+	sf::Int16 *samples = (sf::Int16 *)malloc(sizeof(sf::Int16) * sample_size);
+	memcpy(samples, (void *)sound.getSamples(), count * sizeof(sf::Int16));
+
+	const sf::Int16 *data = samples;
+	int seq = 65400;
 	
 	UdpLink *link = init_connect("127.0.0.1", 10210);
 	if(!link){
@@ -82,13 +96,9 @@ int main(int argc, char **argv){
 		exit(0);
 	}
 
-	const sf::Int16 *data = samples;
-	int seq = 0;
-	int chunk_size = FRAME_SIZE;
-	log_debug("%d %d %d %f", count, rate, chunk_size, (float)count/rate);
 	while(1){
 		usleep(39 * 1000);
-		if(data - samples > count){
+		if(data - samples >= count){
 			data = samples;
 		}
 		

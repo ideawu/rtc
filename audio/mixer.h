@@ -13,8 +13,6 @@ class Mixer
 private:
 	std::map<int, Channel *> channels;
 	Chunk out_chunk;
-	// 对于一条新的声道, 尝试先缓冲一部分数据再处理.
-	// 也就是在最初的BUF_SIZE个tick周期内, 忽略该声道的数据
 	const static int BUF_SIZE = 3;
 public:
 	void reset(){

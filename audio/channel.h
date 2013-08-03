@@ -14,10 +14,13 @@ private:
 	const static int BUF_SIZE = 3;
 	int slow_start;
 	int idle;
-	int next_seq;
+	uint16_t next_seq;
+
+	std::list<Chunk> chunks;
+	// read next chunk from chunks list into out_chunk
+	int next_chunk();
 public:
 	int id;
-	std::list<Chunk> chunks;
 
 	Channel();
 	~Channel();
@@ -30,9 +33,11 @@ public:
 		return idle > BUF_SIZE;
 	}
 	
-	//Chunk* simulate_lost_frame(int seq);
+	//Chunk* simulate_lost_chunk(int seq);
 	
-	Chunk* next_chunk();
+	int mix_into(Chunk *chunk);
+	const Chunk* unmix_from(const Chunk &mixed);
+	
 	int push_chunk(const Chunk &chunk);
 };
 

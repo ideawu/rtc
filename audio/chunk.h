@@ -8,7 +8,7 @@ namespace audio{
 class Chunk
 {
 public:
-	int seq; // TODO:
+	uint16_t seq;
 	std::string buf;
 	
 	Chunk(){
@@ -28,28 +28,31 @@ public:
 		return buf.size()/2;
 	}
 	
-	void mix(const Chunk &pkt){
-		if(this->buf.size() < pkt.buf.size()){
-			if(this->buf.empty()){
-				this->buf = pkt.buf;
+	// TODO: voice gain
+	// mix this chunk into mixed
+	void mix_into(Chunk *mixed) const{
+		if(this->buf.size() > mixed->buf.size()){
+			if(mixed->buf.empty()){
+				mixed->buf = this->buf;
 				return;
 			}
-			this->buf.resize(pkt.buf.size(), 0);
+			mixed->buf.resize(this->buf.size(), 0);
 		}
-		int16_t *dst = this->frames();
-		int16_t *src = pkt.frames();
+		int16_t *src = this->frames();
+		int16_t *dst = mixed->frames();
 		int size = this->size();
 		for(int i=0; i<size; i++){
 			dst[i] = (dst[i] + src[i])/2;
 		}
 	}
 	
-	void unmix(const Chunk &pkt){
+	// unmix this chunk out of mixed, and set this chunk as the result
+	void unmix_from(const Chunk &mixed){
 		int16_t *dst = this->frames();
-		int16_t *src = pkt.frames();
-		int size = std::min(this->size(), pkt.size());
+		int16_t *src = mixed.frames();
+		int size = std::min(this->size(), mixed.size());
 		for(int i=0; i<size; i++){
-			dst[i] = dst[i] + (dst[i] - src[i]);
+			dst[i] = src[i] * 2 - dst[i];
 		}
 	}
 };

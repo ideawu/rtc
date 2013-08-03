@@ -7,6 +7,7 @@ int Room::join(Client *client){
 }
 
 int Room::quit(Client *client){
+	mixer.free_channel(client->id);
 	clients_.erase(client->id);
 	return 0;
 }
