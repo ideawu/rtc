@@ -26,13 +26,15 @@ Chunk* Mixer::tick(){
 
 		Chunk *chunk = channel->next_chunk();
 		if(!chunk){
-			log_debug("channel[%d] chunk lost", channel->id);
-			// TODO:
-			// simulate chunk, break
+			if(channel->ready()){
+				log_trace("channel[%d] chunk lost", channel->id);
+				// TODO:
+				// simulate chunk, break
+			}
 			continue;
 		}
-		
-		log_debug("channel[%d] mixed, buf=%d", channel->id, channel->chunks.size());
+
+		log_trace("channel[%d] mixed, buf=%d", channel->id, channel->chunks.size());
 		this->out_chunk.mix(*chunk);
 		// TODO: remember which channel is mixed,
 		// unmix before sending the mixed chunk to those users

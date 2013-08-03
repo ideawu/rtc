@@ -30,7 +30,7 @@ int log_write(int level, const char *fmt, ...){
 
 Logger::Logger(){
 	fp = stdout;
-	level_ = LEVEL_DEBUG;
+	level_ = LEVEL_TRACE;
 	mutex = NULL;
 
 	filename[0] = '\0';

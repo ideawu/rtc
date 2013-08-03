@@ -3,6 +3,7 @@
 *.o
 *.exe
 *.dSYM
+*.wav
 ./server/rtc
 ./test/av
 

@@ -14,8 +14,8 @@ Channel::~Channel(){
 }
 
 Chunk* Channel::next_chunk(){
-	if(slow_start < BUF_LOW){
-		log_debug("slow start %d", slow_start);
+	if(slow_start < BUF_SIZE){
+		log_trace("slow start %d", slow_start);
 		slow_start ++;
 		return NULL;
 	}
@@ -43,15 +43,17 @@ Chunk* Channel::next_chunk(){
 }
 
 int Channel::push_chunk(const Chunk &chunk){
-	if(chunks.size() > BUF_HIGH){
-		while(chunks.size() > BUF_LOW){
+	if(chunks.size() > BUF_SIZE){
+		// maybe we should not drop these chunks, we just force
+		// the mixer to mix quicker
+		while(chunks.size() > BUF_SIZE){
 			chunks.pop_front();
 			next_seq ++;
 		}
-		log_debug("buf exceed BUF_HIGH, drop, next_seq: %d", next_seq);
+		log_trace("buf exceed %d, drop, next_seq: %d", BUF_SIZE, next_seq);
 	}
 	chunks.push_back(chunk);
-	return 0;
+	return 1;
 }
 
 }; // namespace

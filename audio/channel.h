@@ -11,8 +11,7 @@ class Channel
 {
 private:
 	Chunk out_chunk;
-	const static int BUF_LOW	= 3;
-	const static int BUF_HIGH	= 6;
+	const static int BUF_SIZE = 3;
 	int slow_start;
 	int idle;
 	int next_seq;
@@ -23,8 +22,12 @@ public:
 	Channel();
 	~Channel();
 	
+	bool ready(){
+		return slow_start >= BUF_SIZE;
+	}
+	
 	bool is_idle(){
-		return idle > BUF_HIGH;
+		return idle > BUF_SIZE;
 	}
 	
 	//Chunk* simulate_lost_frame(int seq);

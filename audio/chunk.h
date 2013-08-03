@@ -20,8 +20,8 @@ public:
 		buf.clear();
 	}
 	
-	uint16_t* frames() const{
-		return (uint16_t *)buf.data();
+	int16_t* frames() const{
+		return (int16_t *)buf.data();
 	}
 	
 	int size() const{
@@ -29,23 +29,24 @@ public:
 	}
 	
 	void mix(const Chunk &pkt){
-		this->buf = pkt.buf;
-		/*
 		if(this->buf.size() < pkt.buf.size()){
+			if(this->buf.empty()){
+				this->buf = pkt.buf;
+				return;
+			}
 			this->buf.resize(pkt.buf.size(), 0);
 		}
-		uint16_t *dst = this->frames();
-		uint16_t *src = pkt.frames();
+		int16_t *dst = this->frames();
+		int16_t *src = pkt.frames();
 		int size = this->size();
 		for(int i=0; i<size; i++){
-			dst[i] = dst[i]/2 + src[i]/2;
+			dst[i] = (dst[i] + src[i])/2;
 		}
-		*/
 	}
 	
 	void unmix(const Chunk &pkt){
-		uint16_t *dst = this->frames();
-		uint16_t *src = pkt.frames();
+		int16_t *dst = this->frames();
+		int16_t *src = pkt.frames();
 		int size = std::min(this->size(), pkt.size());
 		for(int i=0; i<size; i++){
 			dst[i] = dst[i] + (dst[i] - src[i]);
