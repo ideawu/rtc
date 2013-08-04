@@ -1,7 +1,7 @@
 OBJS = room.o server.o
 
 all: ${OBJS}
-	g++ ${CFLAGS} rtc.cpp -o rtc.exe -I .. ../base/librtc-base.a ../audio/librtc-audio.a ${OBJS}
+	g++ ${CFLAGS} rtc.cpp -o rtc.exe -I .. ../base/librtc-base.a audio/librtc-audio.a ${OBJS}
 
 room.o: room.h room.cpp
 	g++ ${CFLAGS} -c room.cpp -I ..

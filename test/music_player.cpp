@@ -1,6 +1,6 @@
 #include "common.h"
 
-#define SAMPLE_RATE 48000
+#define SAMPLE_RATE 16000
 // 40ms, allow 10, 20, 40, 60
 #define PACKET_TIME 40
 #define FRAME_SIZE (PACKET_TIME * SAMPLE_RATE/1000)
