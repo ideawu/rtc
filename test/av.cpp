@@ -1,20 +1,4 @@
-#include <SFML/Audio.hpp>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <netinet/tcp.h>
-#include <string>
-#include <vector>
-#include <iomanip>
-#include <iostream>
-#include <iterator>
-#include <opus.h>
-
-#include "base/log.h"
-#include "base/net.h"
-#include "base/packet.h"
-#include "base/udplink.h"
+#include "common.h"
 
 #define SAMPLE_RATE 48000
 // 40ms, allow 10, 20, 40, 60
@@ -31,8 +15,6 @@ private:
 
 public:
 	NetworkRecorder(){
-		link = NULL;
-		
 		int error;
 		int channels = 1;
 		//OPUS_APPLICATION_VOIP
@@ -46,36 +28,10 @@ public:
 	~NetworkRecorder(){
 		opus_encoder_destroy(enc);
 	}
-
-	int connect(std::string host, short port){
-		int ret;
-		link = UdpLink::client(host, port);
-		
-		Packet req;
-		req.set_type(Packet::JOIN);
-		req.set_seq(101);
-		req.set_params("0", "token");
-		
-		ret = link->send(req);
-		log_debug("send %d bytes", ret);
-		if(ret <= 0){
-			exit(0);
-		}
 	
-		Packet resp;
-		ret = link->recv(&resp);
-		log_debug("recv %d bytes", ret);
-		if(ret > 0){
-			log_debug("recv: %s", resp.repr().c_str());
-		}else{
-			exit(0);
-		}
-
-		int bufsize = 5000;
-		::setsockopt(link->fd(), SOL_SOCKET, SO_SNDBUF, &bufsize, sizeof(bufsize));
-		::setsockopt(link->fd(), SOL_SOCKET, SO_RCVBUF, &bufsize, sizeof(bufsize));
-
-		return 0;
+	void start_work(UdpLink *link){
+		this->link = link;
+		this->start(SAMPLE_RATE);
 	}
 
 private:
@@ -171,7 +127,9 @@ public:
 		::setsockopt(link->fd(), SOL_SOCKET, SO_RCVBUF, &bufsize, sizeof(bufsize));
 	}
 	
-	void start(){
+	void start_work(UdpLink *link){
+		this->link = link;
+
 		play();
 		
 		opus_int16 pcm[8 * 1024];
@@ -246,22 +204,40 @@ public:
 
 
 int main(int argc, char **argv){
-	if(argc > 1){
-		log_debug("run as speaker");
-		
-		NetworkRecorder recorder;
-		recorder.connect("127.0.0.1", 10210);
-	
-		recorder.start(SAMPLE_RATE);
-		getchar();
-		recorder.stop();
-	}else{
-		log_debug("run as player");
-
-		NetworkPlayer player;
-		player.connect("127.0.0.1", 10210);
-		player.start();
+	if(argc != 2){
+		printf("Usage: %s role\n", argv[0]);
+		printf("role -\n");
+		printf("1: speaker, 2: listener, 3: both\n");
+		exit(0);
 	}
+	
+	std::string type = argv[1];
+	if(type != "1" && type != "2" && type != "3"){
+		log_error("invalid role!");
+		exit(0);
+	}
+	
+	UdpLink *link = link_connect("127.0.0.1", 10210);
+	if(!link){
+		log_error("");
+		exit(0);
+	}
+
+	NetworkRecorder recorder;
+	NetworkPlayer player;
+	
+	if(type == "1"){
+		recorder.start_work(link);
+	}
+	if(type == "2"){
+		log_debug("");
+		player.start_work(link);
+	}
+	if(type == "3"){
+		recorder.start_work(link);
+		player.start_work(link);
+	}
+	getchar();
 	
 	return 0;
 }

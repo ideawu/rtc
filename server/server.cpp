@@ -59,7 +59,7 @@ int Server::proc_client_link(UdpLink *link, Fdevents *fdes){
 	
 	int ret = link->recv(&req, &addr);
 	if(ret <= 0){
-		log_error("recv %d from %s, close.", ret, client->addr.repr().c_str());
+		log_info("recv %d from %s, close.", ret, client->addr.repr().c_str());
 		client->room->quit(client);
 		client->room = NULL;
 		client->link = NULL;

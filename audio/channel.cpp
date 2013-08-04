@@ -13,68 +13,54 @@ Channel::Channel(){
 Channel::~Channel(){
 }
 
-int Channel::push_chunk(const Chunk &chunk){
-	if(chunks.size() > BUF_SIZE){
-		// maybe we should not drop these chunks, we just force
+int Channel::push_frame(const Frame &frame){
+	if(frames.size() > BUF_SIZE){
+		// maybe we should not drop these frames, we just force
 		// the mixer to mix quicker
-		while(chunks.size() > BUF_SIZE){
-			chunks.pop_front();
+		while(frames.size() > BUF_SIZE){
+			frames.pop_front();
 			next_seq ++;
 		}
 		log_trace("buf exceed %d, drop, next_seq: %d", BUF_SIZE, next_seq);
 	}
-	chunks.push_back(chunk);
+	frames.push_back(frame);
 	return 1;
 }
 
-int Channel::next_chunk(){
+Frame* Channel::last_frame(){
+	return &this->out_frame;
+}
+
+const Frame* Channel::next_frame(){
 	if(slow_start < BUF_SIZE){
 		log_trace("slow start %d", slow_start);
 		slow_start ++;
-		return 0;
+		return NULL;
 	}
 	
-	while(chunks.size() > 0){
-		out_chunk = chunks.front();
-		if(next_seq == 0 || out_chunk.seq == next_seq){
-			chunks.pop_front();
-			next_seq = out_chunk.seq + 1;
+	while(frames.size() > 0){
+		out_frame = frames.front();
+		if(next_seq == 0 || out_frame.seq == next_seq){
+			frames.pop_front();
+			next_seq = out_frame.seq + 1;
 			idle = 0;
-			return 1;
-		}else if(out_chunk.seq < next_seq){
+			log_trace("channel[%d] mixed, buf=%d", this->id, this->frames.size());
+			return &this->out_frame;
+		}else if(out_frame.seq < next_seq){
 			// 丢弃乱序包
-			chunks.pop_front();
+			frames.pop_front();
 			continue;
-		}else if(out_chunk.seq > next_seq){
-			// chunk is lost
+		}else if(out_frame.seq > next_seq){
+			// frame is lost
 			next_seq ++;
 			break;
 		}
 	}
 
 	idle ++;
-	return 0;
-}
-
-int Channel::mix_into(Chunk *mixed){
-	int ret = this->next_chunk();
-	if(!ret){
-		if(this->ready()){
-			log_trace("channel[%d] chunk lost", this->id);
-			// TODO:
-			// simulate chunk, break
-		}
-		return 0;
-	}
-
-	this->out_chunk.mix_into(mixed);
-	log_trace("channel[%d] mixed, buf=%d", this->id, this->chunks.size());
-	return 1;
-}
-
-const Chunk* Channel::unmix_from(const Chunk &mixed){
-	this->out_chunk.unmix_from(mixed);
-	return &this->out_chunk;
+	// TODO:
+	// simulate frame, break
+	return NULL;
 }
 
 }; // namespace

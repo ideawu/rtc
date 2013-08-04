@@ -25,23 +25,56 @@ int Room::publish(Client *client, Packet *req){
 	}
 	const Bytes &data = params->at(1);
 
-	audio::Chunk chunk;
-	chunk.seq = req->seq();
-	chunk.buf.assign(data.data(), data.size());
-	mixer.process_chunk(client->id, chunk);
+	audio::Frame frame;
+	frame.seq = req->seq();
+	frame.buf.assign(data.data(), data.size());
+	mixer.process_frame(client->id, frame);
 
 	return 0;
 }
 	
 void Room::tick(){
-	audio::Chunk *chunk = mixer.tick();
-	if(chunk == NULL){
+	audio::Frame *mixed_frame = mixer.mix();
+	if(mixed_frame == NULL){
 		return;
 	}
-	if(chunk->buf.size() == 0){
+	if(mixed_frame->buf.size() == 0){
 		return;
 	}
-	this->broadcast(chunk->buf.data(), chunk->buf.size());
+	//this->broadcast(frame->buf.data(), frame->buf.size());
+	Packet resp;
+	resp.set_type(Packet::DATA);
+	resp.set_seq(data_seq_next);
+	// TODO: room_id, data
+	resp.set_data(mixed_frame->buf.data(), mixed_frame->buf.size());
+	
+	std::map<int, Client*>::const_iterator it;
+	for(it = clients_.begin(); it!=clients_.end(); it++){
+		const Client *client = (*it).second;
+		audio::Channel *channel = mixer.get_channel(client->id);
+		if(!channel || channel->last_frame()->empty()){
+			int ret = client->link->send(resp);
+			if(ret <= 0){
+				log_debug("error: %s", strerror(errno));
+			}
+			log_debug("send %d byte(s) to: %s", ret, client->addr.repr().c_str());
+		}else{
+			audio::Frame *frame = channel->last_frame();
+			frame->unmix_from(*mixed_frame);
+			Packet p;
+			p.set_type(Packet::DATA);
+			p.set_seq(data_seq_next);
+			// TODO: room_id, data
+			p.set_data(frame->buf.data(), frame->buf.size());
+			int ret = client->link->send(p);
+			if(ret <= 0){
+				log_debug("error: %s", strerror(errno));
+			}
+			log_debug("send %d byte(s) to: %s", ret, client->addr.repr().c_str());
+		}
+	}
+
+	data_seq_next ++;
 }
 
 void Room::broadcast(const void *data, int size){

@@ -2,7 +2,7 @@
 #define RTC_AUDIO_CHANNEL_H
 
 #include <list>
-#include "chunk.h"
+#include "frame.h"
 #include "channel.h"
 
 namespace audio{
@@ -10,15 +10,13 @@ namespace audio{
 class Channel
 {
 private:
-	Chunk out_chunk;
+	Frame out_frame;
 	const static int BUF_SIZE = 3;
 	int slow_start;
 	int idle;
 	uint16_t next_seq;
 
-	std::list<Chunk> chunks;
-	// read next chunk from chunks list into out_chunk
-	int next_chunk();
+	std::list<Frame> frames;
 public:
 	int id;
 
@@ -33,12 +31,11 @@ public:
 		return idle > BUF_SIZE;
 	}
 	
-	//Chunk* simulate_lost_chunk(int seq);
+	//Frame* simulate_lost_frame(int seq);
 	
-	int mix_into(Chunk *chunk);
-	const Chunk* unmix_from(const Chunk &mixed);
-	
-	int push_chunk(const Chunk &chunk);
+	Frame* last_frame();
+	const Frame* next_frame();
+	int push_frame(const Frame &frame);
 };
 
 };

@@ -2,17 +2,18 @@
 #define RTC_AUDIO_MIXER_H
 
 #include <map>
-#include "chunk.h"
+#include "frame.h"
 #include "channel.h"
 
 namespace audio{
 
-// ticks_per_chunk
+// ticks_per_frame
 class Mixer
 {
 private:
+	Frame mixed_frame;
 	std::map<int, Channel *> channels;
-	Chunk out_chunk;
+	std::vector<const Frame *> mix_list;
 	const static int BUF_SIZE = 3;
 public:
 	void reset(){
@@ -24,12 +25,17 @@ public:
 		channels.clear();
 	}
 	
+	Channel* get_channel(int channel_id);
 	void free_channel(int channel_id);
-	int process_chunk(int channel_id, const Chunk &chunk);
+	int process_frame(int channel_id, const Frame &frame);
 	
-	// 当需要混声下一个chunk时, 调用本方法.
-	// 如果所有声道的下一个chunk为空, 则返回NULL, 否则返回混声后的chunk.
-	Chunk* tick();
+	// 当需要混声下一个frame时, 调用本方法.
+	// 如果所有声道的下一个frame为空, 则返回NULL, 否则返回混声后的frame.
+	Frame* mix();
+	
+	// struct MixItem{channel, frame};
+	//std::vector<MixItem *> *mixlist();
+	//Frame* mix_without_channel(channel_id);
 };
 
 };
