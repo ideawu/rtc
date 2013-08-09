@@ -10,8 +10,10 @@ namespace audio{
 class Channel
 {
 private:
-	Frame out_frame;
 	const static int BUF_SIZE = 12;
+	const static int SLOW_START_TICKS = BUF_SIZE/2;
+
+	Frame out_frame;
 	int slow_start;
 	int idle;
 	uint16_t next_seq;
@@ -24,7 +26,7 @@ public:
 	~Channel();
 	
 	bool ready(){
-		return slow_start >= BUF_SIZE;
+		return slow_start >= SLOW_START_TICKS;
 	}
 	
 	bool is_idle(){

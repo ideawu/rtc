@@ -18,15 +18,16 @@ public:
 	}
 	
 	int input(const int16_t *samples, int size){
+		seq ++;
 		if(size == 0){
-			//return 0;
+			return 0;
 		}
 		
 		int enc_bytes = size * sizeof(int16_t);
 
 		Packet req;
 		req.set_type(Packet::PUB);
-		req.set_seq(seq ++);
+		req.set_seq(seq);
 		req.set_params(Bytes("0", 1), Bytes(samples, enc_bytes));
 		int ret = link->send(req);
 		log_debug("send %d", ret);

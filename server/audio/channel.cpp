@@ -32,7 +32,7 @@ Frame* Channel::last_frame(){
 }
 
 const Frame* Channel::next_frame(){
-	if(slow_start < BUF_SIZE/2){
+	if(slow_start < SLOW_START_TICKS){
 		log_trace("slow start %d", slow_start);
 		slow_start ++;
 		return NULL;
