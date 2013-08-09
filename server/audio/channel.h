@@ -33,6 +33,10 @@ public:
 		return idle > BUF_SIZE;
 	}
 	
+	int size(){
+		return frames.size();
+	}
+	
 	//Frame* simulate_lost_frame(int seq);
 	
 	Frame* last_frame();

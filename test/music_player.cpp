@@ -1,11 +1,39 @@
+#include "SFML/Audio.hpp"
 #include "common.h"
 
-#define SAMPLE_RATE 16000
+#define SAMPLE_RATE 32000
 // 40ms, allow 10, 20, 40, 60
-#define PACKET_TIME 40
+#define PACKET_TIME 10
 #define FRAME_SIZE (PACKET_TIME * SAMPLE_RATE/1000)
 
+volatile uint32_t timer_ticks = 0;
+
+void signal_handler(int sig){
+	switch(sig){
+		case SIGTERM:
+		case SIGINT:{
+			break;
+		}
+		case SIGALRM:{
+			timer_ticks ++;
+			break;
+		}
+	}
+}
+
+
 int main(int argc, char **argv){
+	signal(SIGALRM, signal_handler);
+	signal(SIGINT, signal_handler);
+	signal(SIGTERM, signal_handler);
+	
+	struct itimerval tv;
+	tv.it_interval.tv_sec = 0;
+	tv.it_interval.tv_usec = PACKET_TIME * 1000;
+	tv.it_value.tv_sec = 0;
+	tv.it_value.tv_usec = 1;
+	setitimer(ITIMER_REAL, &tv, NULL); // not accurate
+
 	if(argc != 2){
 		printf("Usage: %s music_file\n", argv[0]);
 		exit(0);
@@ -47,25 +75,40 @@ int main(int argc, char **argv){
 		exit(0);
 	}
 
+	uint32_t last_timer_ticks = timer_ticks;
 	while(1){
-		usleep(39 * 1000);
-		if(data - samples >= count){
-			data = samples;
-		}
+		usleep((PACKET_TIME-5) * 1000);
 		
-		Packet req;
-		req.set_type(Packet::PUB);
-		req.set_seq(seq ++);
-		req.set_params(Bytes("0", 1), Bytes((char *)data, chunk_size * sizeof(sf::Int16)));
+		uint32_t curr_ticks = timer_ticks;
+		if(last_timer_ticks < curr_ticks){
+			uint32_t elapsed_ticks = (uint32_t)(curr_ticks - last_timer_ticks);
+			last_timer_ticks = curr_ticks;
+			if(elapsed_ticks > 5 * 1000/PACKET_TIME){ // 5 seconds
+				// something blocks too long
+				elapsed_ticks = 0;
+			}else{
+				for(int i=0; i<elapsed_ticks; i++){
+					if(data - samples >= count){
+						data = samples;
+					}
+		
+					Packet req;
+					req.set_type(Packet::PUB);
+					req.set_seq(seq ++);
+					req.set_params(Bytes("0", 1), Bytes((char *)data, chunk_size * sizeof(sf::Int16)));
 
-		int ret = link->send(req);
-		log_debug("send %d", ret);
-		if(ret <= 0){
-			exit(0);
-		}
+					int ret = link->send(req);
+					log_debug("send %d", ret);
+					if(ret <= 0){
+						exit(0);
+					}
 		
-		log_debug("offset: %d", data - samples);
-		data += chunk_size;
+					log_debug("offset: %d", data - samples);
+					data += chunk_size;
+				}
+			}
+		}
+
 	}
 	
 	return 0;

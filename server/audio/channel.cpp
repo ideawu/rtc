@@ -33,9 +33,11 @@ Frame* Channel::last_frame(){
 
 const Frame* Channel::next_frame(){
 	if(slow_start < SLOW_START_TICKS){
-		log_trace("slow start %d", slow_start);
+		log_trace("channel[%d] slow start %d", this->id, slow_start);
 		slow_start ++;
-		return NULL;
+		if(slow_start < SLOW_START_TICKS){
+			return NULL;
+		}
 	}
 	
 	while(frames.size() > 0){
@@ -44,8 +46,7 @@ const Frame* Channel::next_frame(){
 			frames.pop_front();
 			next_seq = out_frame.seq + 1;
 			idle = 0;
-			log_trace("channel[%d] mixed, buf=%d", this->id, this->frames.size());
-			return &this->out_frame;
+			return &out_frame;
 		}else if(out_frame.seq < next_seq){
 			// 丢弃乱序包
 			frames.pop_front();
@@ -58,6 +59,7 @@ const Frame* Channel::next_frame(){
 	}
 
 	idle ++;
+	out_frame.buf.clear();
 	// TODO:
 	// simulate frame, break
 	return NULL;

@@ -43,6 +43,7 @@ Frame* Mixer::mix(){
 				log_trace("channel[%d] frame lost", channel->id);
 			}
 		}else{
+			log_trace("channel[%d] mixed, buf=%d, frame.size=%d", channel->id, channel->size(), frame->size());
 			mix_list.push_back(frame);
 		}
 		

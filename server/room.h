@@ -16,8 +16,6 @@ private:
 	audio::Mixer mixer;
 	int ticks;
 	uint16_t data_seq_next;
-	
-	void broadcast(const void *data, int size);
 public:
 	int id;
 

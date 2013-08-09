@@ -57,43 +57,28 @@ void Room::tick(){
 		if(!channel || channel->last_frame()->empty()){
 			int ret = client->link->send(resp);
 			if(ret <= 0){
-				log_debug("error: %s", strerror(errno));
+				log_error("error: %s", strerror(errno));
 			}
-			log_debug("send %d byte(s) to: %s", ret, client->addr.repr().c_str());
+			log_trace("client: %d, send %d byte(s) to: %s",
+				client->id, ret, client->addr.repr().c_str());
 		}else{
 			audio::Frame *frame = channel->last_frame();
 			frame->unmix_from(*mixed_frame);
+			
 			Packet p;
 			p.set_type(Packet::DATA);
 			p.set_seq(data_seq_next);
 			// TODO: room_id, data
 			p.set_data(frame->buf.data(), frame->buf.size());
+			
 			int ret = client->link->send(p);
 			if(ret <= 0){
-				log_debug("error: %s", strerror(errno));
+				log_error("error: %s", strerror(errno));
 			}
-			log_debug("send %d byte(s) to: %s", ret, client->addr.repr().c_str());
+			log_trace("client: %d, send %d byte(s) to: %s",
+				client->id, ret, client->addr.repr().c_str());
 		}
 	}
 
 	data_seq_next ++;
-}
-
-void Room::broadcast(const void *data, int size){
-	Packet resp;
-	resp.set_type(Packet::DATA);
-	resp.set_seq(data_seq_next);
-	resp.set_data(data, size); // TODO: room_id, data
-	
-	data_seq_next ++;
-	
-	std::map<int, Client*>::const_iterator it;
-	for(it = clients_.begin(); it!=clients_.end(); it++){
-		const Client *client = (*it).second;
-		int ret = client->link->send(resp);
-		if(ret <= 0){
-			log_debug("error: %s", strerror(errno));
-		}
-		log_debug("send %d byte(s) to: %s", ret, client->addr.repr().c_str());
-	}
 }

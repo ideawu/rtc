@@ -63,6 +63,7 @@ int Server::proc_client_link(UdpLink *link, Fdevents *fdes){
 		client->room->quit(client);
 		client->room = NULL;
 		client->link = NULL;
+		clients.free(client->id);
 		return -1;
 	}
 	log_debug("recv %d bytes from %s, %s", ret, client->addr.repr().c_str(), req.repr().c_str());

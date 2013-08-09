@@ -19,9 +19,11 @@ public:
 	
 	int input(const int16_t *samples, int size){
 		seq ++;
-		if(size == 0){
+		if(size <= 0){
 			return 0;
 		}
+		
+		// TODO: encode
 		
 		int enc_bytes = size * sizeof(int16_t);
 
@@ -49,7 +51,6 @@ int main(int argc, char **argv){
 		exit(0);
 	}
 
-	
 	audio = ave::AudioDevice::create();
 
 	Callback callback(link);
@@ -59,14 +60,37 @@ int main(int argc, char **argv){
 	log_debug("%d", ret);
 	ret = audio->init_output_device(0, SAMPLE_RATE, 1);
 	log_debug("%d", ret);
-	ret = audio->start_playout();
-	log_debug("%d", ret);
+	
+	//ret = audio->start_playout();
+	//log_debug("%d", ret);
 	ret = audio->start_record();
 	log_debug("%d", ret);
 	
+	while(1){
+		int ret;
+		Packet resp;
+		ret = link->recv(&resp);
+		log_debug("recv %d", ret);
+		if(ret <= 0){
+			exit(0);
+		}
+			
+		const char *raw = resp.data();
+		int nbytes = resp.size();
+		
+		// decode
+		const int16_t *samples = (const int16_t *)raw;
+		int num_samples = nbytes/sizeof(int16_t);
+		ret = audio->play(samples, num_samples);
+		if(ret == -1){
+			log_error("error");
+			exit(0);
+		}
+	}
 	
-	sleep(2);
-	getchar();
+	
+	//sleep(2);
+	//getchar();
 	return 0;
 }
 
