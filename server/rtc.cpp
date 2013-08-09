@@ -5,7 +5,7 @@
 #include "base/fde.h"
 #include "server.h"
 
-#define TICK_INTERVAL 40 // ms
+#define TICK_INTERVAL 10 // ms
 
 UdpLink *serv_link;
 volatile bool quit = false;

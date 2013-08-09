@@ -1,11 +1,16 @@
+LIBAVE_PATH = ../../libave/dist
+
 all:
 	g++ av.cpp -o av.exe \
 		-I .. \
-		-I ../deps/sfml-2.0/include \
+		-I $(LIBAVE_PATH)/include \
 		-I ../deps/opus-1.0.3/include \
-		-L ../deps/sfml-2.0 -lsfml-audio -lsfml-system \
+		-framework ApplicationServices -framework AudioToolbox -framework CoreAudio \
+		$(LIBAVE_PATH)/lib/libave.a \
 		../deps/opus-1.0.3/libopus.a \
 		../base/librtc-base.a
+
+a:
 	g++ music_player.cpp -o music_player.exe \
 		-I .. \
 		-I ../deps/sfml-2.0/include \

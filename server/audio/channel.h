@@ -11,7 +11,7 @@ class Channel
 {
 private:
 	Frame out_frame;
-	const static int BUF_SIZE = 3;
+	const static int BUF_SIZE = 12;
 	int slow_start;
 	int idle;
 	uint16_t next_seq;

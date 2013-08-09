@@ -34,6 +34,8 @@ int Room::publish(Client *client, Packet *req){
 }
 	
 void Room::tick(){
+	// TODO: 如果所有的通道的缓冲区都溢出(超过BUF_SIZE), 则说明时钟周期误差扩大了,
+	// 那么应该再进行第二次混音, 而不必等待下一次的时钟周期.
 	audio::Frame *mixed_frame = mixer.mix();
 	if(mixed_frame == NULL){
 		return;

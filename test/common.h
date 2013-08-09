@@ -1,4 +1,4 @@
-#include <SFML/Audio.hpp>
+#include<inttypes.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <iostream>
 #include <iterator>
+
 #include <opus.h>
 
 #include "base/log.h"

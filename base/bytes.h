@@ -16,8 +16,8 @@ class Bytes{
 			size_ = 0;
 		}
 
-		Bytes(const char *data, int size){
-			data_ = data;
+		Bytes(const void *data, int size){
+			data_ = (const char *)data;
 			size_ = size;
 		}
 

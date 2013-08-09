@@ -73,7 +73,7 @@ pub
 data
 	roles: S -> C
 	with_seq
-	params: room_id data
+	params: room_id type data
 
 retrx
 	roles: C <-> S
