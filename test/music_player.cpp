@@ -6,12 +6,14 @@
 #define PACKET_TIME 10
 #define FRAME_SIZE (PACKET_TIME * SAMPLE_RATE/1000)
 
+bool quit = false;
 volatile uint32_t timer_ticks = 0;
 
 void signal_handler(int sig){
 	switch(sig){
 		case SIGTERM:
 		case SIGINT:{
+			quit = true;
 			break;
 		}
 		case SIGALRM:{
@@ -76,7 +78,7 @@ int main(int argc, char **argv){
 	}
 
 	uint32_t last_timer_ticks = timer_ticks;
-	while(1){
+	while(!quit){
 		usleep((PACKET_TIME-5) * 1000);
 		
 		uint32_t curr_ticks = timer_ticks;

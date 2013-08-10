@@ -77,14 +77,16 @@ int main(int argc, char **argv){
 			
 		const char *raw = resp.data();
 		int nbytes = resp.size();
-		
+
 		// decode
-		const int16_t *samples = (const int16_t *)raw;
-		int num_samples = nbytes/sizeof(int16_t);
-		ret = audio->play(samples, num_samples);
-		if(ret == -1){
-			log_error("error");
-			exit(0);
+		if(nbytes > 0){
+			const int16_t *samples = (const int16_t *)raw;
+			int num_samples = nbytes/sizeof(int16_t);
+			ret = audio->play(samples, num_samples);
+			if(ret == -1){
+				log_error("error");
+				exit(0);
+			}
 		}
 	}
 	

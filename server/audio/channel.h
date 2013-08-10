@@ -10,7 +10,7 @@ namespace audio{
 class Channel
 {
 private:
-	const static int BUF_SIZE = 12;
+	const static int BUF_SIZE = 20;
 	const static int SLOW_START_TICKS = BUF_SIZE/2;
 
 	Frame out_frame;

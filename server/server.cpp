@@ -20,7 +20,7 @@ UdpLink* Server::proc_listen_link(UdpLink *listen_link, Fdevents *fdes){
 
 	int ret;
 	ret = listen_link->recv(&req, &addr);
-	log_debug("recv %d bytes from %s, %s", ret, addr.repr().c_str(), req.repr().c_str());
+	log_trace("recv %d bytes from %s, %s", ret, addr.repr().c_str(), req.repr().c_str());
 
 	ret = req.parse();
 	if(ret == -1){
@@ -66,7 +66,7 @@ int Server::proc_client_link(UdpLink *link, Fdevents *fdes){
 		clients.free(client->id);
 		return -1;
 	}
-	log_debug("recv %d bytes from %s, %s", ret, client->addr.repr().c_str(), req.repr().c_str());
+	log_trace("recv %d bytes from %s, %s", ret, client->addr.repr().c_str(), req.repr().c_str());
 
 	ret = req.parse();
 	if(ret == -1){

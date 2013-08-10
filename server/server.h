@@ -10,6 +10,17 @@ class UdpLink;
 class Packet;
 class Address;
 
+/*
+Room types:
+	Audio Conferencing
+	Non-reliable Broacasting
+		One-on-One Audio Chat
+		Audio Broacasting
+	Reliable Broacasting
+		One-on-One Text Chat
+		Group Text Chat
+*/
+
 class Server
 {
 public:
@@ -31,6 +42,7 @@ public:
 	int proc_client_link(UdpLink *link, Fdevents *fdes);
 	int proc_admin_listen_link(UdpLink *serv_link, Fdevents *fdes);
 	int proc_admin_link(UdpLink *link, Fdevents *fdes);
+
 private:
 	int proc_open(UdpLink *admin_link, Packet *req, Address *addr);
 	int proc_close(UdpLink *link, Packet *req, Address *addr);

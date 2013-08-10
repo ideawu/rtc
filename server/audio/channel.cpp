@@ -53,6 +53,8 @@ const Frame* Channel::next_frame(){
 			continue;
 		}else if(out_frame.seq > next_seq){
 			// frame is lost
+			// TODO:
+			// simulate frame?
 			next_seq ++;
 			break;
 		}
@@ -60,8 +62,6 @@ const Frame* Channel::next_frame(){
 
 	idle ++;
 	out_frame.buf.clear();
-	// TODO:
-	// simulate frame, break
 	return NULL;
 }
 

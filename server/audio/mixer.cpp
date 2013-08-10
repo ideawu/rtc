@@ -24,6 +24,7 @@ int Mixer::process_frame(int channel_id, const Frame &frame){
 		channel = new Channel();
 		channel->id = channel_id;
 		channels[channel_id] = channel;
+		log_debug("add new channel[%d]", channel->id);
 	}else{
 		channel = it->second;
 	}
@@ -43,7 +44,7 @@ Frame* Mixer::mix(){
 				log_trace("channel[%d] frame lost", channel->id);
 			}
 		}else{
-			log_trace("channel[%d] mixed, buf=%d, frame.size=%d", channel->id, channel->size(), frame->size());
+			log_trace("channel[%d] mixed, buf=%d", channel->id, channel->size());
 			mix_list.push_back(frame);
 		}
 		
