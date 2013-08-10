@@ -6,4 +6,5 @@
 *.wav
 ./server/rtc
 ./test/av
+config.mk
 

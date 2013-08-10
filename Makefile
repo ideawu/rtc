@@ -1,18 +1,27 @@
+
+$(sh build.sh > config.mk)
+include config.mk
+
+ROOT = $(shell pwd)
+
 .PHONY: clean test
 
 all:
-	$(eval export CFLAGS=-Wall -Wno-sign-compare -g)
-	cd base; make
-	cd server/audio; make
-	cd server; make
-	cd test; make
+	cd base; make ROOT=$(ROOT)
+	cd server/voice; make ROOT=$(ROOT)
+	cd server; make ROOT=$(ROOT)
+	cd test; make ROOT=$(ROOT)
+	cd client; make ROOT=$(ROOT)
 
 test:
-	cd test; make
+	cd test; make ROOT=$(ROOT)
+
+a:
+	cd client; make ROOT=$(ROOT)
 
 clean:
 	cd base; make clean
-	cd server/audio; make clean
+	cd server/voice; make clean
 	cd server; make clean
 	cd test; make clean
 

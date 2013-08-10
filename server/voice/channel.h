@@ -5,7 +5,7 @@
 #include "frame.h"
 #include "channel.h"
 
-namespace audio{
+namespace voice{
 
 class Channel
 {

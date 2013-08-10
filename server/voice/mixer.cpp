@@ -2,7 +2,7 @@
 #include "base/log.h"
 #include "mixer.h"
 
-namespace audio{
+namespace voice{
 
 Channel* Mixer::get_channel(int channel_id){
 	std::map<int, Channel *>::iterator it = channels.find(channel_id);

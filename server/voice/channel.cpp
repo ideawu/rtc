@@ -1,7 +1,7 @@
 #include "base/log.h"
 #include "channel.h"
 
-namespace audio{
+namespace voice{
 
 Channel::Channel(){
 	id = 0;

@@ -5,7 +5,7 @@
 #include <list>
 #include "base/net.h"
 #include "base/packet.h"
-#include "audio/mixer.h"
+#include "voice/mixer.h"
 #include "room.h"
 #include "client.h"
 
@@ -13,7 +13,7 @@ class Room
 {
 private:
   	std::map<int, Client*> clients_;
-	audio::Mixer mixer;
+	voice::Mixer mixer;
 	int ticks;
 	uint16_t data_seq_next;
 public:

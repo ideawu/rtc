@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace audio{
+namespace voice{
 
 class Frame
 {
