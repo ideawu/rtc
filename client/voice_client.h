@@ -3,6 +3,8 @@
 
 #include <string>
 
+namespace rtc{
+
 class VoiceClient
 {
 public:	
@@ -16,6 +18,10 @@ public:
 	virtual int stop_send() = 0;
 	virtual int start_recv() = 0;
 	virtual int stop_recv() = 0;
+	
+	virtual int run() = 0;
+};
+
 };
 
 #endif
