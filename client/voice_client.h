@@ -9,6 +9,8 @@ class VoiceClient
 {
 public:	
 	static VoiceClient* create();
+
+	virtual int init() = 0;
 	
 	virtual int connect(std::string host, int port) = 0;
 	virtual int join_room(int room_id, std::string token) = 0;

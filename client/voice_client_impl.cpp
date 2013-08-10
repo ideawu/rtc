@@ -8,7 +8,6 @@ namespace rtc{
 
 VoiceClient* VoiceClient::create(){
 	VoiceClientImpl *impl = new VoiceClientImpl();
-	impl->init();
 	return impl;
 }
 
@@ -59,8 +58,7 @@ int VoiceClientImpl::join_room(int room_id, std::string token){
 	Packet req;
 	req.set_type(Packet::JOIN);
 	req.set_seq(101);
-	//req.set_params(room_id_buf, token);
-	req.set_params("0", "a");
+	req.set_params(room_id_buf, token);
 	
 	ret = link->send(req);
 	log_debug("send %d bytes", ret);

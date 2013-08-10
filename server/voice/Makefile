@@ -1,12 +1,7 @@
-OBJS = mixer.o channel.o
+include $(ROOT)/config.mk
 
-all: ${OBJS}
-	ar -cru librtc-voice.a ${OBJS}
+LOCAL_SRC_FILES = $(wildcard *.cpp)
 
-channel.o: channel.h channel.cpp
-	g++ ${CFLAGS} -c channel.cpp -I ../../
-mixer.o: mixer.h mixer.cpp
-	g++ ${CFLAGS} -c mixer.cpp -I ../../
+all:
+	$(CC) -c $(LOCAL_SRC_FILES) $(CFLAGS)
 
-clean:
-	rm -rf *.a *.o	

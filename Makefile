@@ -19,6 +19,5 @@ a:
 	cd client; make ROOT=$(ROOT)
 
 clean:
-	cd server/voice; make clean
 	cd server; make clean
 

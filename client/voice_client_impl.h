@@ -13,19 +13,7 @@
 
 namespace rtc{
 
-class AudioCallbackImpl : public ave::AudioDeviceCallback
-{
-private:
-	uint16_t seq;
-	UdpLink *link;
-public:
-	AudioCallbackImpl(UdpLink *link){
-		seq = 0;
-		this->link = link;
-	}
-	int input(const int16_t *samples, int size);
-};
-
+class AudioCallbackImpl;
 
 class VoiceClientImpl : public VoiceClient
 {
@@ -38,11 +26,12 @@ private:
 	AudioCallbackImpl *audio_callback;
 	
 	bool inited_;
-	int init();
 	
 public:
 	VoiceClientImpl();
 	~VoiceClientImpl();
+	
+	virtual int init();
 	
 	virtual int connect(std::string host, int port);
 	virtual int join_room(int room_id, std::string token);
@@ -56,6 +45,19 @@ public:
 	virtual int run();
 };
 
+
+class AudioCallbackImpl : public ave::AudioDeviceCallback
+{
+private:
+	uint16_t seq;
+	UdpLink *link;
+public:
+	AudioCallbackImpl(UdpLink *link){
+		seq = 0;
+		this->link = link;
+	}
+	int input(const int16_t *samples, int size);
+};
 
 };
 #endif
