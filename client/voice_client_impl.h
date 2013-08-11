@@ -1,12 +1,12 @@
 #ifndef RTC_VOICE_CLIENT_IMPL_H
 #define RTC_VOICE_CLIENT_IMPL_H
 
-#include "ave/audio_device.h"
 #include "base/log.h"
 #include "base/net.h"
 #include "base/packet.h"
 #include "base/udplink.h"
 
+#include "audio_device.h"
 #include "voice_client.h"
 
 // TODO: multithread-lock

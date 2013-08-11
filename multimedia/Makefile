@@ -15,5 +15,6 @@ all:
 	cd webrtc/modules/audio_processing/ns; make ROOT=$(ROOT)
 	cd audio; make ROOT=$(ROOT)
 	cp audio/audio_device.h $(DIST_INC_DIR)
+	ar -cru $(DIST_LIB_DIR)/librtc-multimedia.a $(DIST_OBJ_DIR)/*.o
 
 a:

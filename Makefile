@@ -3,20 +3,25 @@ include config.mk
 
 ROOT = $(shell pwd)
 
-.PHONY: clean test
+.PHONY: *
 
-all:
-	cd base; make ROOT=$(ROOT)
+all: base mm client
+
+server:
 	cd server/voice; make ROOT=$(ROOT)
 	cd server; make ROOT=$(ROOT)
+
+base:
+	cd base; make ROOT=$(ROOT)
+
+mm:
+	cd multimedia; make
+
+client:
 	cd client; make ROOT=$(ROOT)
-	cd test; make ROOT=$(ROOT)
 
 test:
 	cd test; make ROOT=$(ROOT)
-
-a:
-	cd client; make ROOT=$(ROOT)
 
 clean:
 	cd server; make clean
