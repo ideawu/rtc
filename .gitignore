@@ -1,9 +1,14 @@
 .DS_Store
+*.swp
 *.a
+*.la
 *.o
+*.so
+*.lo
 *.exe
 *.dSYM
 *.wav
+.libs
 ./server/rtc
 ./test/av
 config.mk

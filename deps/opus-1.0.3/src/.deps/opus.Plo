@@ -1,0 +1,19 @@
+src/opus.lo src/opus.o: src/opus.c config.h include/opus.h \
+  include/opus_types.h /usr/include/stdint.h include/opus_defines.h \
+  src/opus_private.h celt/arch.h include/opus_types.h
+
+config.h:
+
+include/opus.h:
+
+include/opus_types.h:
+
+/usr/include/stdint.h:
+
+include/opus_defines.h:
+
+src/opus_private.h:
+
+celt/arch.h:
+
+include/opus_types.h:

@@ -1,0 +1,206 @@
+silk/float/LPC_analysis_filter_FLP.lo \
+  silk/float/LPC_analysis_filter_FLP.o:  \
+ silk/float/LPC_analysis_filter_FLP.c config.h /usr/include/stdlib.h \
+  /usr/include/Availability.h /usr/include/AvailabilityInternal.h \
+  /usr/include/_types.h /usr/include/sys/_types.h \
+  /usr/include/sys/cdefs.h /usr/include/sys/_symbol_aliasing.h \
+  /usr/include/sys/_posix_availability.h /usr/include/machine/_types.h \
+  /usr/include/i386/_types.h /usr/include/sys/wait.h \
+  /usr/include/sys/signal.h /usr/include/sys/appleapiopts.h \
+  /usr/include/machine/signal.h /usr/include/i386/signal.h \
+  /usr/include/i386/_structs.h /usr/include/sys/_structs.h \
+  /usr/include/machine/_structs.h /usr/include/mach/i386/_structs.h \
+  /usr/include/sys/resource.h /usr/include/machine/endian.h \
+  /usr/include/i386/endian.h /usr/include/sys/_endian.h \
+  /usr/include/libkern/_OSByteOrder.h \
+  /usr/include/libkern/i386/_OSByteOrder.h /usr/include/alloca.h \
+  /usr/include/machine/types.h /usr/include/i386/types.h \
+  /usr/include/i386/_types.h silk/float/main_FLP.h \
+  silk/float/SigProc_FLP.h silk/SigProc_FIX.h /usr/include/string.h \
+  /usr/include/strings.h /usr/include/secure/_string.h \
+  /usr/include/secure/_common.h silk/typedef.h include/opus_types.h \
+  /usr/include/stdint.h \
+  /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/float.h \
+  silk/resampler_structs.h silk/macros.h config.h silk/Inlines.h \
+  silk/MacroCount.h /usr/include/stdio.h /usr/include/secure/_stdio.h \
+  silk/MacroDebug.h celt/float_cast.h celt/arch.h include/opus_types.h \
+  /usr/include/math.h silk/float/structs_FLP.h silk/typedef.h silk/main.h \
+  silk/SigProc_FIX.h silk/define.h silk/errors.h silk/structs.h \
+  celt/entenc.h \
+  /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/stddef.h \
+  celt/entcode.h \
+  /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h \
+  /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h \
+  /Applications/Xcode.app/Contents/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h \
+  /Applications/Xcode.app/Contents/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h \
+  /usr/include/limits.h /usr/include/machine/limits.h \
+  /usr/include/i386/limits.h /usr/include/i386/_limits.h \
+  /usr/include/sys/syslimits.h celt/ecintrin.h celt/entdec.h \
+  silk/tables.h silk/PLC.h silk/main.h silk/control.h silk/debug.h \
+  silk/structs.h silk/define.h silk/debug.h celt/entenc.h
+
+config.h:
+
+/usr/include/stdlib.h:
+
+/usr/include/Availability.h:
+
+/usr/include/AvailabilityInternal.h:
+
+/usr/include/_types.h:
+
+/usr/include/sys/_types.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/sys/_symbol_aliasing.h:
+
+/usr/include/sys/_posix_availability.h:
+
+/usr/include/machine/_types.h:
+
+/usr/include/i386/_types.h:
+
+/usr/include/sys/wait.h:
+
+/usr/include/sys/signal.h:
+
+/usr/include/sys/appleapiopts.h:
+
+/usr/include/machine/signal.h:
+
+/usr/include/i386/signal.h:
+
+/usr/include/i386/_structs.h:
+
+/usr/include/sys/_structs.h:
+
+/usr/include/machine/_structs.h:
+
+/usr/include/mach/i386/_structs.h:
+
+/usr/include/sys/resource.h:
+
+/usr/include/machine/endian.h:
+
+/usr/include/i386/endian.h:
+
+/usr/include/sys/_endian.h:
+
+/usr/include/libkern/_OSByteOrder.h:
+
+/usr/include/libkern/i386/_OSByteOrder.h:
+
+/usr/include/alloca.h:
+
+/usr/include/machine/types.h:
+
+/usr/include/i386/types.h:
+
+/usr/include/i386/_types.h:
+
+silk/float/main_FLP.h:
+
+silk/float/SigProc_FLP.h:
+
+silk/SigProc_FIX.h:
+
+/usr/include/string.h:
+
+/usr/include/strings.h:
+
+/usr/include/secure/_string.h:
+
+/usr/include/secure/_common.h:
+
+silk/typedef.h:
+
+include/opus_types.h:
+
+/usr/include/stdint.h:
+
+/usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/float.h:
+
+silk/resampler_structs.h:
+
+silk/macros.h:
+
+config.h:
+
+silk/Inlines.h:
+
+silk/MacroCount.h:
+
+/usr/include/stdio.h:
+
+/usr/include/secure/_stdio.h:
+
+silk/MacroDebug.h:
+
+celt/float_cast.h:
+
+celt/arch.h:
+
+include/opus_types.h:
+
+/usr/include/math.h:
+
+silk/float/structs_FLP.h:
+
+silk/typedef.h:
+
+silk/main.h:
+
+silk/SigProc_FIX.h:
+
+silk/define.h:
+
+silk/errors.h:
+
+silk/structs.h:
+
+celt/entenc.h:
+
+/usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/stddef.h:
+
+celt/entcode.h:
+
+/usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h:
+
+/usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h:
+
+/Applications/Xcode.app/Contents/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h:
+
+/Applications/Xcode.app/Contents/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h:
+
+/usr/include/limits.h:
+
+/usr/include/machine/limits.h:
+
+/usr/include/i386/limits.h:
+
+/usr/include/i386/_limits.h:
+
+/usr/include/sys/syslimits.h:
+
+celt/ecintrin.h:
+
+celt/entdec.h:
+
+silk/tables.h:
+
+silk/PLC.h:
+
+silk/main.h:
+
+silk/control.h:
+
+silk/debug.h:
+
+silk/structs.h:
+
+silk/define.h:
+
+silk/debug.h:
+
+celt/entenc.h:
