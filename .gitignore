@@ -13,4 +13,5 @@
 ./test/av
 config.mk
 dist
+deps/opus-1.0.3
 
