@@ -1,6 +1,8 @@
 #ifndef RTC_BASE_NET_H
 #define RTC_BASE_NET_H
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
@@ -15,10 +17,10 @@ public:
 public:
 	Address();
 	~Address();
-	
+
 	std::string host() const;
 	int port() const;
-	
+
 	std::string repr() const{
 		char buf[16];
 		snprintf(buf, sizeof(buf), "%d", this->port());

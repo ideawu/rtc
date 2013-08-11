@@ -7,6 +7,13 @@
 #include <math.h>
 #include <string>
 
+#ifndef PRId64
+#define PRId64 "lld"
+#endif
+#ifndef PRIu64
+#define PRIu64 "llu"
+#endif
+
 inline static
 int is_empty_str(const char *str){
 	const char *p = str;
