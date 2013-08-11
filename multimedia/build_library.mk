@@ -16,7 +16,7 @@ endif
 all:
 	$(build_c)
 	$(build_cc)
-	ar -cru $(DIST_LIB_DIR)/$(LOCAL_MODULE) *.o
-	cp *.o $(DIST_OBJ_DIR)
+	$(AR)$(DIST_LIB_DIR)/$(LOCAL_MODULE).$(LIB) *.$(OBJ)
+	cp *.$(OBJ) $(DIST_OBJ_DIR)
 	echo
 
