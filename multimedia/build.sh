@@ -14,6 +14,23 @@ mkdir -p ${DIST_OBJ_DIR}
 mkdir -p ${DIST_INC_DIR}
 
 
+TARGET_OS=`uname -s`
+case "$TARGET_OS" in
+    Darwin)
+		OS=mac
+        ;;
+    Linux)
+		OS=linux
+        ;;
+    CYGWIN_*)
+		OS=linux
+        ;;
+    *)
+        echo "Unknown platform!" >&2
+        exit 1
+esac
+
+
 #### generate config.mk ####
 
 echo BASE_DIR := $BASE_DIR
@@ -22,13 +39,13 @@ echo DIST_OBJ_DIR := $DIST_OBJ_DIR
 echo DIST_INC_DIR := $DIST_INC_DIR
 echo 
 echo TARGET_ARCH=x86
-echo OS=mac
+echo OS=$OS
 echo C=clang
 echo CC=clang++
 echo 
 echo CFLAGS :=
 echo CFLAGS += -Wall -Wno-sign-compare -g
 echo CFLAGS += -I $BASE_DIR
-echo CFLAGS += -D WEBRTC_MAC -D WEBRTC_CLOCK_TYPE_REALTIME -DWEBRTC_NS_FIXED
+echo CFLAGS += -D WEBRTC_${OS^^} -D WEBRTC_CLOCK_TYPE_REALTIME -DWEBRTC_NS_FIXED
 
 
