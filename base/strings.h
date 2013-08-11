@@ -1,7 +1,10 @@
 #ifndef UTIL_STRING_H
 #define UTIL_STRING_H
 
-#include "../include.h"
+#include <inttypes.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
 #include <string>
 
 inline static

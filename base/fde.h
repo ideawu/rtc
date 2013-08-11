@@ -1,7 +1,7 @@
 #ifndef UTIL_FDE_H
 #define UTIL_FDE_H
 
-#include "../include.h"
+#include <vector>
 
 #ifdef __linux__
 	#define HAVE_EPOLL 1
@@ -24,7 +24,6 @@ struct Fdevent{
 	}data;
 };
 
-#include <vector>
 #ifdef HAVE_EPOLL
 	#include <sys/epoll.h>
 #else
