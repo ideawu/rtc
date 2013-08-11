@@ -1,0 +1,31 @@
+!include $(ROOT)/config.nmk
+
+LOCAL_MODULE = libwebrtc_system_wrappers.lib
+LOCAL_SRC_FILES = \
+    map.cc \
+    sort.cc \
+    aligned_malloc.cc \
+    condition_variable.cc \
+    cpu_features.cc \
+    cpu_info.cc \
+    critical_section.cc \
+    event.cc \
+    event_tracer.cc \
+    file_impl.cc \
+    list_no_stl.cc \
+	logging.cc \
+    rw_lock.cc \
+    thread.cc \
+    trace_impl.cc \
+    sleep.cc \
+    tick_util.cc \
+    thread_win.cc \
+    condition_variable_native_win.cc \
+    critical_section_win.cc \
+    event_win.cc \
+    trace_win.cc \
+    rw_lock_win.cc 
+
+
+!include $(ROOT)/build_library.nmk
+

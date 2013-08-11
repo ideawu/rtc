@@ -1,0 +1,6 @@
+
+all:
+	$(CC) /c $(LOCAL_SRC_FILES) $(CFLAGS)
+	lib *.obj /NOLOGO /OUT:$(DIST_LIB_DIR)/$(LOCAL_MODULE)
+	copy *.obj $(DIST_OBJ_DIR)
+

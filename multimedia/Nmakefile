@@ -1,0 +1,23 @@
+ROOT = $(MAKEDIR)
+!include config.nmk
+
+all:
+	if not exist $(DIST_LIB_DIR) md $(DIST_LIB_DIR)
+	if not exist $(DIST_OBJ_DIR) md $(DIST_OBJ_DIR)
+	if not exist $(DIST_INC_DIR) md $(DIST_INC_DIR)
+	cd webrtc/system_wrappers/source & nmake /NOLOGO /f Nmakefile ROOT=$(ROOT)
+
+
+abc: a.exe
+	cd webrtc/modules/audio_device; make ROOT=$(ROOT)
+	cd webrtc/common_audio/signal_processing; make ROOT=$(ROOT)
+	cd webrtc/common_audio/vad; make ROOT=$(ROOT)
+	cd webrtc/common_audio/resampler; make ROOT=$(ROOT)
+	cd webrtc/modules/audio_processing/utility; make ROOT=$(ROOT)
+	cd webrtc/modules/audio_processing/aec; make ROOT=$(ROOT)
+	cd webrtc/modules/audio_processing/agc; make ROOT=$(ROOT)
+	cd webrtc/modules/audio_processing/ns; make ROOT=$(ROOT)
+	cd audio; make ROOT=$(ROOT)
+	cp audio/audio_device.h $(DIST_INC_DIR)
+	ar -cru $(DIST_LIB_DIR)/librtc-multimedia.a $(DIST_OBJ_DIR)/*.o
+

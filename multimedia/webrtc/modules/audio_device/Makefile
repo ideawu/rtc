@@ -14,6 +14,12 @@ LOCAL_SRC_FILES += \
     mac/audio_mixer_manager_mac.cc \
 	mac/portaudio/pa_ringbuffer.c
 endif
+ifeq ($(OS),linux)
+LOCAL_SRC_FILES += \
+    linux/audio_device_alsa_linux.cc \
+    linux/audio_device_utility_linux.cc \
+    linux/audio_mixer_manager_alsa_linux.cc
+endif
 
 CFLAGS += \
 	-I ./$(OS)
