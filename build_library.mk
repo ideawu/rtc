@@ -18,5 +18,5 @@ all:
 	$(build_cc)
 	$(AR)$(DIST_LIB_DIR)/$(LOCAL_MODULE).$(LIB) *.$(OBJ)
 	cp *.$(OBJ) $(DIST_OBJ_DIR)
-	echo
+	@echo
 
