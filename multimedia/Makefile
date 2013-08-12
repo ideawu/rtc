@@ -15,7 +15,6 @@ all:
 	cd audio; make ROOT=$(ROOT)
 	cp audio/audio_device.h $(DIST_INC_DIR)
 	$(AR) $(DIST_LIB_DIR)/librtc-multimedia.$(LIB) $(DIST_OBJ_DIR)/*.$(OBJ)
-	echo
 
 a:
 

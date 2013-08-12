@@ -1,6 +1,7 @@
-OBJS = room.o server.o
+OBJS = room.o server.o fde.o
 
 all: ${OBJS}
+	g++ $(CFLAGS) -c fde.cpp
 	g++ ${CFLAGS} rtc.cpp -o rtc.exe -I .. ../dist/lib/librtc-base.a voice/*.o ${OBJS}
 
 room.o: room.h room.cpp
