@@ -15,7 +15,7 @@ base:
 	cd base; make ROOT=$(ROOT)
 
 mm:
-	cd multimedia; make
+	cd multimedia; make ROOT=$(ROOT)
 
 client:
 	cd client; make ROOT=$(ROOT)

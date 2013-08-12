@@ -1,6 +1,6 @@
 include $(ROOT)/config.mk
 
-LOCAL_MODULE := libwebrtc_spl.a
+LOCAL_MODULE := libwebrtc_spl
 LOCAL_SRC_FILES := \
     auto_corr_to_refl_coef.c \
     auto_correlation.c \

@@ -1,6 +1,6 @@
 include $(ROOT)/config.mk
 
-LOCAL_MODULE := libwebrtc_apm.a
+LOCAL_MODULE := libwebrtc_apm
 LOCAL_SRC_FILES := \
     audio_buffer.cc \
     audio_processing_impl.cc \

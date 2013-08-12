@@ -1,6 +1,6 @@
 include $(ROOT)/config.mk
 
-LOCAL_MODULE := libwebrtc_vad.a
+LOCAL_MODULE := libwebrtc_vad
 LOCAL_SRC_FILES := \
     webrtc_vad.c \
     vad_core.c \

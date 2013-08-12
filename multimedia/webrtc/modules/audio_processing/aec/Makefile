@@ -1,13 +1,13 @@
 include $(ROOT)/config.mk
 
-LOCAL_MODULE := libwebrtc_aec.a
+LOCAL_MODULE := libwebrtc_aec
 LOCAL_SRC_FILES := \
     echo_cancellation.c \
     aec_resampler.c \
     aec_core.c \
     aec_rdft.c \
 
-ifeq ($(TARGET_ARCH),x86)
+ifeq ($(TARGET_ARCH), x86)
 LOCAL_SRC_FILES += \
     aec_core_sse2.c \
     aec_rdft_sse2.c
