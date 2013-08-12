@@ -6,7 +6,7 @@ build_c :=
 build_cc :=
 
 ifneq ($(C_SRC_FILES),)
-	build_c = $(C)   -c $(C_SRC_FILES) $(CFLAGS)
+	build_c = $(C) -c $(C_SRC_FILES) $(CFLAGS)
 endif
 ifneq ($(CC_SRC_FILES),)
 	build_cc = $(CC) -c $(CC_SRC_FILES) $(CFLAGS)
