@@ -36,6 +36,10 @@ UdpLink* Server::proc_listen_link(UdpLink *listen_link, Fdevents *fdes){
 			this->proc_open(listen_link, &req, &addr);
 			break;
 		}
+		case Packet::SIGN:{
+			this->proc_sign(listen_link, &req, &addr);
+			break;
+		}
 		case Packet::JOIN:{
 			Client *client = this->proc_join(listen_link, &req, &addr);
 			if(client){
@@ -103,7 +107,7 @@ int Server::proc_client_link(UdpLink *link, Fdevents *fdes){
 }
 
 // TODO: TcpLink
-int Server::proc_open(UdpLink *link, Packet *req, Address *addr){
+int Server::proc_open(UdpLink *admin_link, Packet *req, Address *addr){
 	Room *room = rooms.alloc();
 	log_debug("open room %d", room->id);
 	
@@ -114,10 +118,31 @@ int Server::proc_open(UdpLink *link, Packet *req, Address *addr){
 	resp.set_type(Packet::RESP);
 	resp.set_seq(req->seq());
 	resp.set_params("ok", buf);
-	int ret = link->send(resp, addr);
-	if(ret <= 0){
-		log_error("send error: %s", strerror(errno));
+	admin_link->send(resp, addr);
+
+	return 0;
+}
+
+int Server::proc_sign(UdpLink *admin_link, Packet *req, Address *addr){
+	if(req->params()->size() < 1){
+		log_error("bad format");
+		return 0;
 	}
+	
+	Packet resp;
+	int room_id = req->params()->at(0).Int();
+	std::string token = tokens.create(room_id, 600);
+	log_debug("create token: %s, room_id: %d", token.c_str(), room_id);
+	
+	if(token.empty()){
+		resp.set_params("error");
+	}else{
+		resp.set_params("ok", token);
+	}
+	resp.set_type(Packet::RESP);
+	resp.set_seq(req->seq());
+	admin_link->send(resp, addr);
+	
 	return 0;
 }
 
@@ -132,22 +157,24 @@ Client* Server::proc_join(UdpLink *serv_link, Packet *req, Address *addr){
 	
 	log_debug("%s join room %d token %s", addr->repr().c_str(), room_id, token.c_str());
 	
+	// do auth
+	if(tokens.check_and_destroy(room_id, token) != 1){
+		log_debug("token error!");
+		// TODO: response error
+	}
 	Room *room = rooms.get(room_id);
 	if(!room){
 		log_error("room %d not exists!", room_id);
 		Packet resp;
 		resp.set_type(Packet::RESP);
 		resp.set_seq(req->seq());
-		resp.set_params("fail", "room_id and token do not match!\n");
+		resp.set_params("error", "token error!\n");
 		int ret = serv_link->send(resp, addr);
 		if(ret <= 0){
 			log_error("send error: %s", strerror(errno));
 		}
 		return NULL;
 	}
-	
-	// TODO: do auth
-	// room->check_token();
 	
 	UdpLink *link = UdpLink::server("127.0.0.1", 10210);
 	if(link == NULL){

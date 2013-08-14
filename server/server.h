@@ -4,6 +4,7 @@
 #include "base/log.h"
 #include "fde.h"
 #include "room.h"
+#include "token.h"
 #include "client.h"
 
 class UdpLink;
@@ -26,6 +27,7 @@ class Server
 public:
 	RoomSvc rooms;
 	ClientSvc clients;
+	TokenSvc tokens;
 
 	Server();
 	~Server();
@@ -45,6 +47,7 @@ public:
 
 private:
 	int proc_open(UdpLink *admin_link, Packet *req, Address *addr);
+	int proc_sign(UdpLink *admin_link, Packet *req, Address *addr);
 	int proc_close(UdpLink *link, Packet *req, Address *addr);
 	Client* proc_join(UdpLink *serv_link, Packet *req, Address *addr);
 	int proc_quit(UdpLink *link, Packet *req, Address *addr);

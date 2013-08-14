@@ -9,7 +9,7 @@
 
 UdpLink *serv_link;
 volatile bool quit = false;
-volatile uint32_t timer_ticks = 0;
+volatile uint32_t g_ticks = 0;
 
 int serv_init(int argc, char **argv);
 int serv_free();
@@ -22,7 +22,7 @@ void signal_handler(int sig){
 			break;
 		}
 		case SIGALRM:{
-			timer_ticks ++;
+			g_ticks ++;
 			break;
 		}
 	}
@@ -42,7 +42,7 @@ int main(int argc, char **argv){
 
 	fdes.set(serv_link->fd(), FDEVENT_IN, FRONT_LISTEN_LINK, serv_link);
 	
-	uint32_t last_timer_ticks = timer_ticks;
+	uint32_t last_timer_ticks = g_ticks;
 	while(!quit){
 		events = fdes.wait(TICK_INTERVAL);
 		if(events == NULL){
@@ -50,7 +50,7 @@ int main(int argc, char **argv){
 			break;
 		}
 		
-		uint32_t curr_ticks = timer_ticks;
+		uint32_t curr_ticks = g_ticks;
 		if(last_timer_ticks < curr_ticks){
 			uint32_t elapsed_ticks = (uint32_t)(curr_ticks - last_timer_ticks);
 			last_timer_ticks = curr_ticks;

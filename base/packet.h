@@ -33,6 +33,7 @@ public:
 	// if big-endian ((a<<8)+(b))
 	const static uint16_t RESP	= TYPE_VALUE('r', 'e');
 	const static uint16_t OPEN	= TYPE_VALUE('o', 'p');
+	const static uint16_t SIGN	= TYPE_VALUE('s', 'i');
 	const static uint16_t CLOSE	= TYPE_VALUE('c', 'l');
 	const static uint16_t JOIN	= TYPE_VALUE('j', 'o');
 	const static uint16_t QUIT	= TYPE_VALUE('q', 'u');

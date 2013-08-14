@@ -84,7 +84,17 @@ int Packet::append(const Bytes &b){
 
 int Packet::set_params(const Bytes &b1){
 	this->len = HEADER_LEN;
-	return this->append(b1);
+	int ret = 0;
+	int tmp;
+	tmp = this->append(b1);
+	if(tmp == -1){
+		return -1;
+	}
+	ret += tmp;
+	
+	// add a '\n' to let the packet print-friendly
+	this->buf()[this->len++] = '\n';
+	return ret;
 }
 
 int Packet::set_params(const Bytes &b1, const Bytes &b2){
@@ -101,6 +111,9 @@ int Packet::set_params(const Bytes &b1, const Bytes &b2){
 		return -1;
 	}
 	ret += tmp;
+	
+	// add a '\n' to let the packet print-friendly
+	this->buf()[this->len++] = '\n';
 	return ret;
 }
 
@@ -123,5 +136,8 @@ int Packet::set_params(const Bytes &b1, const Bytes &b2, const Bytes &b3){
 		return -1;
 	}
 	ret += tmp;
+	
+	// add a '\n' to let the packet print-friendly
+	this->buf()[this->len++] = '\n';
 	return ret;
 }
