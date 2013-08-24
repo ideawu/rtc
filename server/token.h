@@ -23,7 +23,7 @@ public:
 	
 	int tick(uint32_t timer_ticks);
 	std::string create(int room_id, int ttl_sec);
-	void destroy(const std::string &token);
+	void erase(const std::string &token);
 	int check_and_destroy(int room_id, const std::string &token);
 };
 

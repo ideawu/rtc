@@ -158,9 +158,10 @@ Client* Server::proc_join(UdpLink *serv_link, Packet *req, Address *addr){
 	log_debug("%s join room %d token %s", addr->repr().c_str(), room_id, token.c_str());
 	
 	// do auth
-	if(tokens.check_and_destroy(room_id, token) != 1){
+	if(tokens.check_and_erase(room_id, token) != 1){
 		log_debug("token error!");
 		// TODO: response error
+		return NULL;
 	}
 	Room *room = rooms.get(room_id);
 	if(!room){

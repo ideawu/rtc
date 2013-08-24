@@ -62,12 +62,12 @@ std::string TokenSvc::create(int room_id, int ttl_sec){
 	return "";
 }
 
-void TokenSvc::destroy(const std::string &token){
+void TokenSvc::erase(const std::string &token){
 	tokens.erase(token);
 }
 
 // 返回 room_id
-int TokenSvc::check_and_destroy(int room_id, const std::string &token){
+int TokenSvc::check_and_erase(int room_id, const std::string &token){
 	std::map<std::string, TokenItem>::iterator it;
 	it = tokens.find(token);
 	if(it == tokens.end()){
